@@ -1,0 +1,5 @@
+package dtos
+
+func GithubOAuth() {
+
+}
