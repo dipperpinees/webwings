@@ -1,0 +1,2 @@
+import ./web/*.caddyfile
+import ./static/*.caddyfile
