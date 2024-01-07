@@ -1,6 +1,6 @@
-import { Flex, FormLabel, Select, Text, useColorModeValue } from "@chakra-ui/react";
+import { Flex, FormLabel, Select, SelectProps, Text, useColorModeValue } from "@chakra-ui/react";
 
-export function AutoDeploy() {
+export function AutoDeploy({selectProps}: {selectProps: SelectProps}) {
     return (
         <Flex w="100%" align="center" gap={2}>
             <Flex direction="column" flex={1}>
@@ -13,9 +13,9 @@ export function AutoDeploy() {
                 </Text>
             </Flex>
             <Flex flex={2}>
-                <Select>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                <Select {...selectProps}>
+                    <option value="yes">Yes</option>
+                    <option value="">No</option>
                 </Select>
             </Flex>
         </Flex>

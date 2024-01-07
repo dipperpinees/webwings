@@ -1,6 +1,10 @@
-import { Center, Flex, FormControl, FormLabel, Input, InputGroup, InputLeftElement, Text, useColorModeValue } from "@chakra-ui/react";
+import { Center, Flex, FormControl, FormLabel, Input, InputGroup, InputLeftElement, InputProps, Text, useColorModeValue } from "@chakra-ui/react";
 
-export function BuildCommand() {
+interface Props {
+    inputProps: InputProps;
+}
+
+export function BuildCommand({inputProps}: Props) {
     return (
         <FormControl>
             <Flex w="100%" align="center" gap={2}>
@@ -20,7 +24,7 @@ export function BuildCommand() {
                                 $
                             </Center>
                         </InputLeftElement>
-                        <Input py={5} prefix="$" />
+                        <Input py={5} prefix="$" {...inputProps}/>
                     </InputGroup>
                 </Flex>
             </Flex>

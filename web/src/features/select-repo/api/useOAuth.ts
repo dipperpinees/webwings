@@ -8,7 +8,7 @@ const getOAuthData = () => {
     })
 }
 
-const useOAuth = () => {
+export const useOAuth = () => {
     return useQuery({
         queryKey: ['oauth'],
         queryFn: getOAuthData,
@@ -16,5 +16,3 @@ const useOAuth = () => {
         cacheTime: Infinity
     })
 };
-
-export default useOAuth;

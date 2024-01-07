@@ -8,7 +8,7 @@ import { BsFillPlusCircleFill, BsGithub } from "react-icons/bs";
 import { FcOk } from "react-icons/fc";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ESelectRepo, IGithubRepo } from "..";
-import useOAuth from "../api/useOAuth";
+import {useOAuth} from "../api";
 import { RepositoriesList, SearchRepo } from "../components";
 
 export default function SelectRepositories() {
@@ -57,7 +57,7 @@ export default function SelectRepositories() {
                     </Heading>
                     <SearchRepo />
                     {oauthData?.length ? (
-                        <RepositoriesList onSelectedRepo={handleSelectRepo} />
+                        <RepositoriesList onSelectedRepo={handleSelectRepo} oauth={oauthData[0]} />
                     ) : (
                         <Flex
                             borderRadius={4}

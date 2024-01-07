@@ -1,11 +1,12 @@
 import { TitleLayout } from "@/components";
 import { useSelectedRepo } from "@/stores";
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { useBranchesList } from "../../api";
+import { useBranchesList, useCreateDeployment } from "../../api";
 import { AdvancedConfig, BuildCommand, SelectBranch, SelectDirectory, ServiceName } from "../Form";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { IDeployment } from "../..";
+import { EDeploymentType, IDeployment } from "../..";
+import { useState } from "react";
 
 export function CreateWebStatic() {
     const selectedRepo = useSelectedRepo((state) => state.selectedRepo);
@@ -17,11 +18,43 @@ export function CreateWebStatic() {
         register,
         formState: { errors },
         handleSubmit,
+        control
     } = useForm<IDeployment>();
+    const {mutateAsync: createDeployment} = useCreateDeployment();
+    const toast = useToast();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     if (!selectedRepo) return <></>;
 
-    const onSubmit: SubmitHandler<IDeployment> = () => {};
+    const onSubmit: SubmitHandler<IDeployment> = async (data) => {
+        setIsLoading(true);
+        try {
+            await createDeployment({
+                ...data,
+                auto_deploy: !!data.auto_deploy,
+                repo_url: selectedRepo.html_url,
+                repo: selectedRepo.name,
+                oauth: selectedRepo.oauth,
+                type: EDeploymentType.STATIC
+            });
+            toast({
+                title: "Create web static successfully",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+        } catch (error) {
+            let message = "Create web static failed";
+            if (error instanceof Error) message = error.message;
+            toast({
+                title: message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+        setIsLoading(false);
+    };
 
     return (
         <TitleLayout
@@ -43,20 +76,21 @@ export function CreateWebStatic() {
                         inputProps={{...register("name", {
                             required: {
                                 value: true,
-                                message: "Password is required",
-                            },
-                            minLength: {
-                                value: 6,
-                                message: "This field has a minimum length of 6",
+                                message: "This field is required",
                             },
                         })}}
+                        error={errors.name?.message}
                     />
-                    <SelectBranch name="static site" branches={branchesData} />
-                    <SelectDirectory />
-                    <BuildCommand />
-                    <AdvancedConfig showEnvConfig={false} />
+                    <SelectBranch 
+                        name="static site" 
+                        branches={branchesData} 
+                        control={control}
+                    />
+                    <SelectDirectory inputProps={{...register("root")}} />
+                    <BuildCommand inputProps={{...register("build_command")}} />
+                    <AdvancedConfig showEnvConfig={false} register={register} />
                 </Flex>
-                <Button colorScheme="blue" type="submit">Create static site</Button>
+                <Button isLoading={isLoading} colorScheme="blue" type="submit">Create static site</Button>
             </form>
         </TitleLayout>
     );

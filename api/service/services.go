@@ -1,7 +1,7 @@
 package services
 
 import (
-	deloyment "github.com/dipperpinees/ci/service/deployment"
+	"github.com/dipperpinees/ci/service/deployment"
 	"github.com/dipperpinees/ci/service/repo"
 	"github.com/dipperpinees/ci/service/runtime"
 	"github.com/dipperpinees/ci/service/user"
@@ -18,6 +18,6 @@ func Register(server *echo.Echo) {
 	runtimesService := runtime.Service{Router: server.Group("/runtimes")}
 	runtimesService.RegisterRoutes(&userService)
 
-	deploymentService := deloyment.Service{Router: server.Group("/deployment")}
+	deploymentService := deployment.Service{Router: server.Group("/deployment")}
 	deploymentService.RegisterRoutes(&userService)
 }

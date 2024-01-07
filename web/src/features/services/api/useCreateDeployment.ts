@@ -1,10 +1,9 @@
+import authFetch from "@/utils/auth-fetch";
 import { useMutation } from "react-query";
 import { IDeployment } from "..";
-import { API_URL } from "@/configs";
-import authFetch from "@/utils/auth-fetch";
 
 const createDeployment = (data: IDeployment) => {
-    return authFetch<IDeployment>(API_URL + "/user/sign-in", {
+    return authFetch<IDeployment>("/deployment", {
         method: "POST",
         headers: {
             "Content-type": "application/json"
@@ -14,9 +13,5 @@ const createDeployment = (data: IDeployment) => {
 }
 
 export function useCreateDeployment() {
-    return useMutation(createDeployment, {
-        onSuccess: (data) => {
-            
-        }
-    });
+    return useMutation(createDeployment);
 }

@@ -2,7 +2,7 @@ import authFetch from '@/utils/auth-fetch';
 import { UseQueryOptions, useQuery } from 'react-query';
 import { IGithubRepo } from '../types/Repositories';
 
-const useRepositoriesList = (configs: UseQueryOptions<IGithubRepo[]> = {}) => {
+export const useRepositoriesList = (configs: UseQueryOptions<IGithubRepo[]> = {}) => {
     const getRepositoriesList = async (): Promise<IGithubRepo[]>=> {
         const data = await authFetch<IGithubRepo[]>(`/repo`, {
             method: "GET"
@@ -19,5 +19,3 @@ const useRepositoriesList = (configs: UseQueryOptions<IGithubRepo[]> = {}) => {
         ...configs
     })
 };
-
-export default useRepositoriesList;

@@ -1,12 +1,22 @@
 import { Flex, FormControl, FormLabel, Select, Text, useColorModeValue } from "@chakra-ui/react";
-import { IBranch } from "../..";
+import { Control, useController } from "react-hook-form";
+import { IBranch, IDeployment } from "../..";
 
 interface Props {
     name: string;
-    branches: IBranch[] | undefined
+    branches: IBranch[] | undefined;
+    control: Control<IDeployment, any>;
 }
 
-export function SelectBranch({name, branches = []}: Props) {
+export function SelectBranch({name, branches = [], control}: Props) {
+    if (!branches.length) return <></>;
+
+    const { field } = useController({
+        name: "branch",
+        control,
+        defaultValue: branches[0]?.name,
+    });
+    
     return (
         <FormControl>
             <Flex w="100%" align="center" gap={2}>
@@ -19,7 +29,7 @@ export function SelectBranch({name, branches = []}: Props) {
                     </Text>
                 </Flex>
                 <Flex flex={2}>
-                    <Select py={5}>
+                    <Select py={5} {...field}>
                         {branches?.map((branch) => (
                             <option value={branch.name} key={branch.name}>
                                 {branch.name}

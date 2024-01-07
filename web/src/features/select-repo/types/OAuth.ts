@@ -1,5 +1,5 @@
 export interface IOAuth {
-    'id': (number);
+    'id': (string);
     'userId': string;
     'gitUserId': (number);
     'username': (string);

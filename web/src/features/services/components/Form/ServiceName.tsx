@@ -1,13 +1,23 @@
-import { Flex, FormControl, FormLabel, Input, InputProps, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+    Flex,
+    FormControl,
+    FormErrorMessage,
+    FormLabel,
+    Input,
+    InputProps,
+    Text,
+    useColorModeValue,
+} from "@chakra-ui/react";
 
 interface Props {
     name: string;
-    inputProps: InputProps
+    inputProps: InputProps;
+    error?: string;
 }
 
-export function ServiceName({name, inputProps}: Props) {
+export function ServiceName({ name, inputProps, error = "" }: Props) {
     return (
-        <FormControl>
+        <FormControl isInvalid={!!error}>
             <Flex w="100%" align="center" gap={2}>
                 <Flex direction="column" flex={1}>
                     <FormLabel m={0}>
@@ -17,8 +27,9 @@ export function ServiceName({name, inputProps}: Props) {
                         A unique name for your {name}.
                     </Text>
                 </Flex>
-                <Flex flex={2}>
+                <Flex direction="column" flex={2}>
                     <Input placeholder="example-service-name" py={5} {...inputProps} />
+                    <FormErrorMessage mt={1}>{error}</FormErrorMessage>
                 </Flex>
             </Flex>
         </FormControl>

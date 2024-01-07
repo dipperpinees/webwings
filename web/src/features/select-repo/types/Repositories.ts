@@ -18,4 +18,5 @@ export interface IGithubRepo {
     "owner": {
         "login": string
     }
+    "oauth": string
 }

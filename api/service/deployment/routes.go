@@ -1,4 +1,4 @@
-package deloyment
+package deployment
 
 import (
 	"github.com/dipperpinees/ci/service/deployment/handlers"

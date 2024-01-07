@@ -1,8 +1,10 @@
-import { Flex, FormControl, FormLabel, HStack, Input, Text, useColorModeValue } from "@chakra-ui/react";
+import { Flex, FormControl, FormLabel, HStack, Input, InputProps, Text, useColorModeValue } from "@chakra-ui/react";
 
-interface Props {}
+interface Props {
+    inputProps: InputProps;
+}
 
-export function SelectDirectory({}: Props) {
+export function SelectDirectory({inputProps}: Props) {
     return (
         <FormControl>
             <Flex w="100%" align="center" gap={2}>
@@ -20,7 +22,7 @@ export function SelectDirectory({}: Props) {
                     </Text>
                 </Flex>
                 <Flex flex={2}>
-                    <Input placeholder="e.g. src" py={5} />
+                    <Input placeholder="e.g. src" py={5} {...inputProps} />
                 </Flex>
             </Flex>
         </FormControl>

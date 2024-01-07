@@ -4,37 +4,17 @@ import { useRef } from "react";
 import { AiOutlineLock } from "react-icons/ai";
 import { BsGithub } from "react-icons/bs";
 import { Link, useSearchParams } from "react-router-dom";
-import useRepositoriesList from "../../../select-repo/api/useRepositoriesList";
-import { IGithubRepo } from "../../../select-repo/types/Repositories";
+import { IGithubRepo, IOAuth, useRepositoriesList } from "../..";
 
 interface IRepositoriesListProps {
     onSelectedRepo: (repo: IGithubRepo) => void;
+    oauth: IOAuth;
 }
 
-export function RepositoriesList({ onSelectedRepo }: IRepositoriesListProps) {
+export function RepositoriesList({ onSelectedRepo, oauth }: IRepositoriesListProps) {
     const { data: repos, isLoading, isRefetching } = useRepositoriesList();
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const [searchParams] = useSearchParams();
-
-    // const handleGetMoreData = () => {
-    //     if (!repos?.pageInfo.hasNextPage) return;
-    //     if (isRefetching) return;
-    //     refetchRepos();
-    // }
-
-    // useEffect(() => {
-    //     function handleScroll() {
-    //         if (Number(scrollRef.current?.scrollTop) + Number(scrollRef.current?.clientHeight) === scrollRef.current?.scrollHeight) {
-    //             handleGetMoreData()
-    //         }
-    //     }
-
-    //     scrollRef.current?.addEventListener('scroll', handleScroll);
-
-    //     return () => {
-    //         scrollRef.current?.removeEventListener('scroll', handleScroll);
-    //     };
-    // }, [repos]);
 
     const filterRepos = () => {
         const search = searchParams.get("q");
@@ -81,7 +61,12 @@ export function RepositoriesList({ onSelectedRepo }: IRepositoriesListProps) {
                     </Link>
                     {repo.private && <Icon as={AiOutlineLock} />}
                     <Text fontSize="sm">• {getTimeAgo(new Date(repo.updated_at))}</Text>
-                    <Button colorScheme="blue" size="sm" marginLeft="auto" onClick={() => onSelectedRepo(repo)}>
+                    <Button
+                        colorScheme="blue"
+                        size="sm"
+                        marginLeft="auto"
+                        onClick={() => onSelectedRepo({ ...repo, oauth: oauth.id })}
+                    >
                         Connect
                     </Button>
                 </Flex>

@@ -37,7 +37,8 @@ export default async function authFetch<T>(input: RequestInfo | URL, init?: Requ
     if (response.status === 401) return fetchUnauthorizedHandler<T>(request);
     if (response.status === 400) {
         const message = await response.json();
-        throw new Error(message.error);
+        const errorMessage = message.error || message.message || "Request failed with stattus 400";
+        throw new Error(errorMessage);
     }
     throw new Error(response.statusText);    
 }

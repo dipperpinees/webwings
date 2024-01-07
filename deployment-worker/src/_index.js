@@ -1,6 +1,6 @@
 const amqp = require('amqplib');
 
-amqp.connect('amqps://sqsmggdi:PSRn3V0FAs7t7zdDmmtIHz2RMXTO_g2c@armadillo.rmq.cloudamqp.com/sqsmggdi', function(error0, connection) {
+amqp.connect('', function(error0, connection) {
     if (error0) {
         throw error0;
     }

@@ -24,4 +24,5 @@ export interface IDeployment {
     status: EDeployStatus;
     created_at: Date;
     updated_at: Date;
+    oauth: string;
 }

@@ -6,13 +6,14 @@ import (
 )
 
 type CreateDeploymentBody struct {
+	Name          string               `json:"name" validate:"required"`
 	Type          enums.DeploymentType `json:"type" validate:"required"`
 	OAuthID       uuid.UUID            `json:"oauth" validate:"required"`
 	RepoName      string               `json:"repo" validate:"required"`
 	RepoURL       string               `json:"repo_url" validate:"required"`
-	RuntimeID     uint                 `json:"runtime" validate:"required"`
+	RuntimeID     uint                 `json:"runtime"`
 	AutoDeploy    bool                 `json:"auto_deploy" validate:"required"`
-	BuildCommand  string               `json:"build_command" validate:"required"`
+	BuildCommand  string               `json:"build_command"`
 	Branch        string               `json:"branch" validate:"required"`
-	RootDirectory string               `json:"root" validate:"required"`
+	RootDirectory string               `json:"root"`
 }

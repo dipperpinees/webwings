@@ -11,5 +11,6 @@ func Migrate() {
 		&models.Runtimes{},
 		&models.ResetPassword{},
 		&models.Deployment{},
+		&models.WebServiceDeployment{},
 	)
 }

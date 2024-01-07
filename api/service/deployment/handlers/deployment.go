@@ -5,6 +5,7 @@ import (
 
 	"github.com/dipperpinees/ci/pkg/db"
 	"github.com/dipperpinees/ci/pkg/db/models"
+	"github.com/dipperpinees/ci/pkg/db/models/enums"
 	"github.com/dipperpinees/ci/service/deployment/dtos"
 	"github.com/labstack/echo/v4"
 )
@@ -15,9 +16,11 @@ func CreateNewDeployment(c echo.Context) error {
 	if err := c.Bind(&body); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+	if err := c.Validate(body); err != nil {
+		return err
+	}
 	newDeployment := &models.Deployment{
 		OAuthID:       body.OAuthID,
-		RuntimeID:     body.RuntimeID,
 		Branch:        body.Branch,
 		RepoName:      body.RepoName,
 		RepoURL:       body.RepoURL,
@@ -30,5 +33,15 @@ func CreateNewDeployment(c echo.Context) error {
 	if err := db.GetDB().Create(newDeployment).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+	if newDeployment.Type == enums.WEB {
+		newWebService := models.WebServiceDeployment{
+			DeploymentID: newDeployment.ID,
+			RuntimeID:    body.RuntimeID,
+		}
+		if err := db.GetDB().Create(newWebService).Error; err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+	}
+
 	return c.JSON(http.StatusOK, newDeployment)
 }
