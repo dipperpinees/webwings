@@ -6,7 +6,9 @@ import (
 	"github.com/dipperpinees/ci/pkg/db"
 	"github.com/dipperpinees/ci/pkg/db/models"
 	"github.com/dipperpinees/ci/pkg/db/models/enums"
+	"github.com/dipperpinees/ci/pkg/mq"
 	"github.com/dipperpinees/ci/service/deployment/dtos"
+	userRepo "github.com/dipperpinees/ci/service/user/repositories"
 	"github.com/labstack/echo/v4"
 )
 
@@ -20,6 +22,7 @@ func CreateNewDeployment(c echo.Context) error {
 		return err
 	}
 	newDeployment := &models.Deployment{
+		Name:          body.Name,
 		OAuthID:       body.OAuthID,
 		Branch:        body.Branch,
 		RepoName:      body.RepoName,
@@ -41,7 +44,21 @@ func CreateNewDeployment(c echo.Context) error {
 		if err := db.GetDB().Create(newWebService).Error; err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
+		newDeployment.WebService = newWebService
 	}
 
+	currentOAuth, err := userRepo.GetOAuthByID(newDeployment.OAuthID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	newDeployment.OAuth = *currentOAuth
+
+	// send message to queue
+	mq.SendToQueue("DEPLOYMENT", newDeployment)
+
 	return c.JSON(http.StatusOK, newDeployment)
+}
+
+func GetDeploymentList(c echo.Context) error {
+
 }

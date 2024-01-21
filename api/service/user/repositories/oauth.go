@@ -10,6 +10,12 @@ func CreateOAuth(oauth *models.Oauth) error {
 	return db.GetDB().Create(oauth).Error
 }
 
+func GetOAuthByID(id uuid.UUID) (*models.Oauth, error) {
+	currentOAuth := new(models.Oauth)
+	err := db.GetDB().Where("id = ?", id).First(&currentOAuth).Error
+	return currentOAuth, err
+}
+
 func GetUniqueOAuth(username string, userID uuid.UUID) (*models.Oauth, error) {
 	currentOAuth := new(models.Oauth)
 	err := db.GetDB().Where("git_username = ?", username).Where("user_id = ?", userID).First(&currentOAuth).Error

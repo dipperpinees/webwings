@@ -8,7 +8,7 @@ import (
 type CreateDeploymentBody struct {
 	Name          string               `json:"name" validate:"required"`
 	Type          enums.DeploymentType `json:"type" validate:"required"`
-	OAuthID       uuid.UUID            `json:"oauth" validate:"required"`
+	OAuthID       uuid.UUID            `json:"oauth_id" validate:"required"`
 	RepoName      string               `json:"repo" validate:"required"`
 	RepoURL       string               `json:"repo_url" validate:"required"`
 	RuntimeID     uint                 `json:"runtime"`

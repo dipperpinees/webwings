@@ -34,7 +34,7 @@ export function CreateWebStatic() {
                 auto_deploy: !!data.auto_deploy,
                 repo_url: selectedRepo.html_url,
                 repo: selectedRepo.name,
-                oauth: selectedRepo.oauth,
+                oauth_id: selectedRepo.oauth,
                 type: EDeploymentType.STATIC
             });
             toast({
