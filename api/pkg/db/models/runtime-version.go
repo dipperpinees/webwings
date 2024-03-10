@@ -5,7 +5,7 @@ import (
 )
 
 type RuntimeVersion struct {
-	ID          uint
+	ID          uint      `json:"id"`
 	Name        string    `json:"name"`
 	Tag         string    `json:"tag"`
 	RuntimeName string    `json:"runtime_name"`

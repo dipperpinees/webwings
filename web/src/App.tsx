@@ -1,7 +1,7 @@
 import { AppProvider } from "@/providers/app";
 import { AppRoutes } from "@/routes";
 import { ColorModeProvider } from "@chakra-ui/react";
-import "@fontsource/poppins";
+import "@fontsource/inter";
 
 function App() {
     return (

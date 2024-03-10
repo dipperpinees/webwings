@@ -52,9 +52,16 @@ type Repository struct {
 	Owner           RepositoryOwner `json:"owner"`
 }
 
+type Commit struct {
+	SHA     string `json:"sha"`
+	URL     string `json:"url"`
+	HtmlUrl string `json:"html_url"`
+}
+
 type Branch struct {
 	Name      string `json:"name"`
 	Protected bool   `json:"protected"`
+	Commit    Commit `json:"commit"`
 }
 
 func GetAccessToken(code string) (string, error) {
@@ -117,5 +124,16 @@ func GetBranchesList(accessToken string, username string, repo string) (*[]Branc
 	}
 
 	body, err := _http.Request[[]Branch](requestUrl, &_http.RequestOptions{Method: "GET", Headers: &header})
+	return body, err
+}
+
+func GetBranchInfo(accessToken string, username string, repo string, branch string) (*Branch, error) {
+	requestUrl := fmt.Sprintf("%s/repos/%s/%s/branches/%s", constant.GITHUB_REST_API_ENDPOINT, username, repo, branch)
+	header := map[string]string{
+		"Accept":        "application/json",
+		"Authorization": "Bearer " + accessToken,
+	}
+
+	body, err := _http.Request[Branch](requestUrl, &_http.RequestOptions{Method: "GET", Headers: &header})
 	return body, err
 }

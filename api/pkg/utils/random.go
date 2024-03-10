@@ -2,6 +2,9 @@ package utils
 
 import (
 	"crypto/rand"
+	"time"
+
+	"github.com/goombaio/namegenerator"
 )
 
 var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
@@ -14,4 +17,12 @@ func RandomString(length int) string {
 		b[i] = chars[int(b[i])%ll]
 	}
 	return string(b)
+}
+
+func GenerateName() string {
+	seed := time.Now().UTC().UnixNano()
+
+	nameGenerator := namegenerator.NewNameGenerator(seed)
+	name := nameGenerator.Generate()
+	return name
 }

@@ -91,7 +91,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 borderBottom="0.5px solid var(--chakra-colors-chakra-border-color)"
                 zIndex={100000}
             >
-                <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+                <Flex h={14} alignItems={"center"} justifyContent={"space-between"}>
                     <IconButton
                         size={"md"}
                         icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -120,7 +120,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                                 display={"flex"}
                                 minW={0}
                             >
-                                <Button colorScheme="blue">
+                                <Button colorScheme="teal">
                                     <HStack>
                                         <Icon as={MdAdd} fontSize={20} />
                                         <Text>New</Text>
@@ -128,9 +128,9 @@ export function MainLayout({ children }: MainLayoutProps) {
                                 </Button>
                             </MenuButton>
                             <MenuList>
-                                <Link to="/app/select-repo/static">
+                                {/* <Link to="/app/select-repo/static">
                                     <MenuItem icon={<Icon as={MdWebAsset} />}>Static Site</MenuItem>
-                                </Link>
+                                </Link> */}
                                 <Link to="/app/select-repo/web">
                                     <MenuItem icon={<Icon as={PiComputerTowerBold} />}>Web Service</MenuItem>
                                 </Link>

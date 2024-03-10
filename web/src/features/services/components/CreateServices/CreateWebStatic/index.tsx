@@ -1,12 +1,12 @@
 import { TitleLayout } from "@/components";
 import { useSelectedRepo } from "@/stores";
 import { Button, Flex, Text, useToast } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import { useBranchesList, useCreateDeployment } from "../../api";
-import { AdvancedConfig, BuildCommand, SelectBranch, SelectDirectory, ServiceName } from "../Form";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { EDeploymentType, IDeployment } from "../..";
 import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { EDeploymentType, IDeployment } from "../../..";
+import { useBranchesList, useCreateDeployment } from "../../../api";
+import { AdvancedConfig, BuildCommand, SelectBranch, SelectDirectory, ServiceName } from "../Form";
 
 export function CreateWebStatic() {
     const selectedRepo = useSelectedRepo((state) => state.selectedRepo);
@@ -90,7 +90,7 @@ export function CreateWebStatic() {
                     <BuildCommand inputProps={{...register("build_command")}} />
                     <AdvancedConfig showEnvConfig={false} register={register} />
                 </Flex>
-                <Button isLoading={isLoading} colorScheme="blue" type="submit">Create static site</Button>
+                <Button isLoading={isLoading} colorScheme="teal" type="submit">Create static site</Button>
             </form>
         </TitleLayout>
     );

@@ -16,4 +16,9 @@ type CreateDeploymentBody struct {
 	BuildCommand  string               `json:"build_command"`
 	Branch        string               `json:"branch" validate:"required"`
 	RootDirectory string               `json:"root"`
+	EnvVariables  string               `json:"env_variables"`
+}
+
+type GetDeploymentParams struct {
+	ID string `param:"id"`
 }

@@ -8,8 +8,8 @@ const config: ThemeConfig = {
 const theme = extendTheme({
     config,
     fonts: {
-        heading: "Poppins",
-        body: "Poppins",
+        heading: "Inter",
+        body: "Inter",
     },
     colors: {
         beauty: "rgb(90, 90, 130)",

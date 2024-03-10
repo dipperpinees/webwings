@@ -1,8 +1,8 @@
 import authFetch from "@/utils/auth-fetch";
-import { useMutation } from "react-query";
-import { IDeployment } from "..";
+import { useMutation, useQueryClient } from "react-query";
+import { ICreateDeployment, IDeployment } from "..";
 
-const createDeployment = (data: IDeployment) => {
+const createDeployment = (data: ICreateDeployment) => {
     return authFetch<IDeployment>("/deployment", {
         method: "POST",
         headers: {
@@ -13,5 +13,10 @@ const createDeployment = (data: IDeployment) => {
 }
 
 export function useCreateDeployment() {
-    return useMutation(createDeployment);
+    const queryClient = useQueryClient();
+    return useMutation(createDeployment, {
+        onSuccess: () => {
+            queryClient.removeQueries(["deployments"])
+        }
+    });
 }

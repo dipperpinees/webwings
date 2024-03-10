@@ -6,9 +6,13 @@ import (
 	"github.com/dipperpinees/ci/pkg/db"
 	"github.com/dipperpinees/ci/pkg/db/models"
 	"github.com/dipperpinees/ci/pkg/db/models/enums"
+	"github.com/dipperpinees/ci/pkg/github"
 	"github.com/dipperpinees/ci/pkg/mq"
+	"github.com/dipperpinees/ci/pkg/utils"
 	"github.com/dipperpinees/ci/service/deployment/dtos"
 	userRepo "github.com/dipperpinees/ci/service/user/repositories"
+
+	eventRepo "github.com/dipperpinees/ci/service/event/repositories"
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,11 +36,14 @@ func CreateNewDeployment(c echo.Context) error {
 		RootDirectory: body.RootDirectory,
 		Type:          body.Type,
 		UserID:        user.ID,
+		Status:        "PROGESSING",
+		Domain:        utils.GenerateName(),
+		EnvVariables:  models.JSON(body.EnvVariables),
 	}
 	if err := db.GetDB().Create(newDeployment).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if newDeployment.Type == enums.WEB {
+	if newDeployment.Type == "WEB" {
 		newWebService := models.WebServiceDeployment{
 			DeploymentID: newDeployment.ID,
 			RuntimeID:    body.RuntimeID,
@@ -53,6 +60,20 @@ func CreateNewDeployment(c echo.Context) error {
 	}
 	newDeployment.OAuth = *currentOAuth
 
+	branchData, err := github.GetBranchInfo(currentOAuth.AccessToken, currentOAuth.GitUsername, newDeployment.RepoName, newDeployment.Branch)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	// create event
+	eventRepo.CreateEvent(&models.Events{
+		DeploymentID: newDeployment.ID,
+		CommitURL:    branchData.Commit.HtmlUrl,
+		CommitSHA:    branchData.Commit.SHA,
+		Type:         string(enums.INIT_DEPLOY),
+		AutoTrigger:  true,
+	})
+
 	// send message to queue
 	mq.SendToQueue("DEPLOYMENT", newDeployment)
 
@@ -60,5 +81,24 @@ func CreateNewDeployment(c echo.Context) error {
 }
 
 func GetDeploymentList(c echo.Context) error {
+	user, _ := c.Get("user").(*models.User)
 
+	deploymentList := new([]models.Deployment)
+	if err := db.GetDB().Order("updated_at desc").Find(deploymentList).Where("user_id = ?", user.ID).Preload("WebService").Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, deploymentList)
+}
+
+func GetDeploymentByID(c echo.Context) error {
+	deploymentID := c.Param("id")
+
+	deployment := new(models.Deployment)
+
+	if err := db.GetDB().Where("id = ?", deploymentID).Preload("OAuth").Preload("Events").First(deployment).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	deployment.OAuth.AccessToken = ""
+	return c.JSON(http.StatusOK, deployment)
 }

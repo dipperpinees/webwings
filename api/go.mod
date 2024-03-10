@@ -7,13 +7,13 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.1
 	github.com/labstack/echo/v4 v4.11.2
+	github.com/rabbitmq/amqp091-go v1.9.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.14.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gorm.io/driver/postgres v1.5.3
 	gorm.io/gorm v1.25.5
-	github.com/rabbitmq/amqp091-go v1.9.0
-
+	github.com/goombaio/namegenerator v0.0.0-20181006234301-989e774b106e
 )
 
 require (

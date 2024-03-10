@@ -1,4 +1,5 @@
-import { IRuntime } from ".";
+import { IOAuth } from "@/features/select-repo";
+import { IEvent, IRuntime } from ".";
 
 export enum EDeploymentType {
     STATIC = "STATIC",
@@ -12,6 +13,7 @@ export enum EDeployStatus {
 }
 
 export interface IDeployment {
+    id: string;
     type: EDeploymentType;
     repo: string;
     name: string;
@@ -25,4 +27,31 @@ export interface IDeployment {
     created_at: Date;
     updated_at: Date;
     oauth_id: string;
+    oauth: IOAuth;
+    domain: string;
+    commit_url: string;
+    commit_sha: string;
+    event: IEvent[];
+    start_command: string;
+    env_variables: IEnvironment[];
+}
+
+export interface ICreateDeployment {
+    type: EDeploymentType;
+    repo: string;
+    name: string;
+    repo_url: string;
+    runtime: number;
+    auto_deploy: boolean;
+    build_command: string;
+    branch: string;
+    root: string;
+    oauth_id: string;
+    start_command: string;
+    env_variables: string;
+}
+
+export interface IEnvironment {
+    key: string;
+    value: string;
 }

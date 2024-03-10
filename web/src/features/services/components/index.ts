@@ -1,2 +1,2 @@
-export * from "./CreateWebServices";
-export * from "./CreateWebStatic";
+export * from "./CreateServices";
+export * from "./MonitorServices";

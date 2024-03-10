@@ -1,4 +1,4 @@
-import getTimeAgo from "@/utils/time-since";
+import {getTimeAgo} from "@/utils/time";
 import { Button, Flex, Icon, Spinner, Text } from "@chakra-ui/react";
 import { useRef } from "react";
 import { AiOutlineLock } from "react-icons/ai";
@@ -62,7 +62,7 @@ export function RepositoriesList({ onSelectedRepo, oauth }: IRepositoriesListPro
                     {repo.private && <Icon as={AiOutlineLock} />}
                     <Text fontSize="sm">• {getTimeAgo(new Date(repo.updated_at))}</Text>
                     <Button
-                        colorScheme="blue"
+                        colorScheme="teal"
                         size="sm"
                         marginLeft="auto"
                         onClick={() => onSelectedRepo({ ...repo, oauth: oauth.id })}

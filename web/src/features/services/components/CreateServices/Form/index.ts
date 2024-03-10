@@ -4,3 +4,4 @@ export * from "./Runtime";
 export * from "./Directory";
 export * from "./BuildCommand";
 export * from "./Advanced";
+export * from "./StartCommand";

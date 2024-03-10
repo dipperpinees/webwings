@@ -1,11 +1,11 @@
 import { Flex, FormControl, FormLabel, Select, Text, useColorModeValue } from "@chakra-ui/react";
 import { Control, useController } from "react-hook-form";
-import { IBranch, IDeployment } from "../..";
+import { IBranch, ICreateDeployment } from "../../..";
 
 interface Props {
     name: string;
     branches: IBranch[] | undefined;
-    control: Control<IDeployment, any>;
+    control: Control<ICreateDeployment, any>;
 }
 
 export function SelectBranch({name, branches = [], control}: Props) {

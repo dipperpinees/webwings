@@ -4,10 +4,9 @@ import "github.com/dipperpinees/ci/pkg/db/models"
 
 func Seed() {
 	db.Create(&[]models.Runtimes{
-		{Name: "Node", Image: "node"},
-		{Name: "Go", Image: "go"},
-		{Name: "Python3", Image: "python"},
-		{Name: "Docker", Image: "docker"},
+		{Name: "Node", Image: "node", BuildCommand: "pnpm build", StartCommand: "pnpm start"},
+		{Name: "Go", Image: "go", BuildCommand: "go build -o app.go", StartCommand: "./app"},
+		{Name: "Python3", Image: "python", BuildCommand: "pip install", StartCommand: "python main.py"},
 	})
 	db.Create(&[]models.RuntimeVersion{
 		{RuntimeName: "Node", Name: "21.1", Tag: "21.1-alpine3.17"},

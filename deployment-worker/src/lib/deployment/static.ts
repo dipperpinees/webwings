@@ -14,8 +14,8 @@ export class StaticDeployment {
 
     async start(deployment: IStaticDeployment, cb: (log: string) => void) {
         cb("Clone repo");
-        const cloneCmd = `https://${deployment.oauth.username}:${deployment.oauth.access_token}@github.com/${deployment.oauth.username}/${deployment.repo}.git`;
-        await this.project.clone(deployment.id, cloneCmd, cb);
+        const gitUrl = `https://${deployment.oauth.username}:${deployment.oauth.access_token}@github.com/${deployment.oauth.username}/${deployment.repo}.git`;
+        await this.project.clone(deployment.id, gitUrl, cb);
         cb("Clone repo successfully");
 
         // this.caddy.new({id: deployment.id, domain: ""})

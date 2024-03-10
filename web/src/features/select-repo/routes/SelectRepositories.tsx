@@ -72,7 +72,7 @@ export default function SelectRepositories() {
                             <Button
                                 leftIcon={<Icon as={BsGithub} />}
                                 size="lg"
-                                colorScheme="blue"
+                                colorScheme="teal"
                                 onClick={handleGithubOAuth}
                             >
                                 Connect GitHub

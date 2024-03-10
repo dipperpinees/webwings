@@ -22,7 +22,7 @@ export function LandingLayout({ children }: LandingLayoutProps) {
                     <Flex alignItems={"center"}>
                         {user ? (
                             <Link to="/app/dashboard">
-                                <Button colorScheme="blue" borderRadius={50}>
+                                <Button colorScheme="teal" borderRadius={50}>
                                     Dashboard
                                 </Button>
                             </Link>
@@ -32,7 +32,7 @@ export function LandingLayout({ children }: LandingLayoutProps) {
                                     <Button>Sign Up</Button>
                                 </Link>
                                 <Link to="/auth/sign-in">
-                                    <Button colorScheme="blue">Sign In</Button>
+                                    <Button colorScheme="teal">Sign In</Button>
                                 </Link>
                             </Flex>
                         )}

@@ -7,9 +7,14 @@ import (
 )
 
 type Service struct {
-	Router *echo.Group
+	Router                     *echo.Group
+	DeploymentPolicyMiddleware func(next echo.HandlerFunc) echo.HandlerFunc
 }
 
 func (s *Service) RegisterRoutes(userSvc *user.Service) {
+	s.DeploymentPolicyMiddleware = InitDeploymentPolicyMiddleware()
+
 	s.Router.POST("", handlers.CreateNewDeployment, userSvc.AuthMiddleware)
+	s.Router.GET("", handlers.GetDeploymentList, userSvc.AuthMiddleware)
+	s.Router.GET("/:id", handlers.GetDeploymentByID, userSvc.AuthMiddleware, s.DeploymentPolicyMiddleware)
 }

@@ -1,14 +1,14 @@
+import { ICreateDeployment } from "@/features/services";
 import { VStack } from "@chakra-ui/react";
 import { useState } from "react";
+import { UseFormRegister } from "react-hook-form";
 import { AutoDeploy } from "./AutoDeploy";
 import { EnvironmentVariable } from "./Environment";
 import { ToggleAdvanced } from "./ToggleAdvanced";
-import { UseFormRegister } from "react-hook-form";
-import { IDeployment } from "@/features/services";
 
 interface IAdvancedConfigProps {
     showEnvConfig?: boolean;
-    register: UseFormRegister<IDeployment>;
+    register: UseFormRegister<ICreateDeployment>;
 }
 
 export function AdvancedConfig({showEnvConfig = true, register}: IAdvancedConfigProps) {
