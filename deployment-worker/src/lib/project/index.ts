@@ -1,7 +1,7 @@
 import { Config } from '@/config';
 import { Inject, Service } from 'typedi';
 import Cmd from '../cmd';
-import { existsSync } from 'fs';
+import { existsSync, mkdir, mkdirSync } from 'fs';
 import path from 'path';
 
 @Service()
@@ -9,7 +9,9 @@ export class Project {
     constructor(@Inject() private readonly config: Config, @Inject() private readonly cmd: Cmd) {}
 
     clone(id: string, url: string, cb: (log: string) => void) {
-        return this.cmd.spawnSync('git', ['clone', url, id], { cwd: this.config.projectPath }, cb);
+        const dir = path.join(this.config.projectPath, id);
+        if (!existsSync(dir)) mkdirSync(dir);
+        return this.cmd.spawnSync('git', ['clone', url, "src"], { cwd: dir }, cb);
     }
 
     isExist(id: string) {

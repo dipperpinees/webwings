@@ -11,3 +11,4 @@ const deploymentConsumer = Container.get(DeploymentConsumer);
 deploymentConsumer.init().catch(err => {
     throw err;
 });
+

@@ -3,19 +3,15 @@ import { Service } from 'typedi';
 
 @Service()
 export class Config {
-    caddyPath: string ;
-    projectPath: string;
+    caddyPath: string;
     amqpUri: string;
-    dockerhubUser: string;
     constructor() {
         this.caddyPath = path.resolve("caddy");
-        this.projectPath = path.resolve("projects");
 
         if (!process.env.AMQP_URI) {
             throw new Error("Environment AMQP_URI is undefined")
         }
         this.amqpUri = process.env.AMQP_URI;
-        this.dockerhubUser = process.env.DOCKERHUB_USER as string;
     }
     
 }

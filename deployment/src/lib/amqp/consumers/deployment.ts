@@ -1,21 +1,21 @@
-import { WebDeployment } from '@/lib/deployment';
-import { IStaticDeployment } from '@/types';
-import { Channel, ConsumeMessage } from 'amqplib';
 import { Inject, Service } from 'typedi';
 import Amqp from '../amqp';
+import { StaticDeployment } from '@/lib/deployment';
+import { ConsumerMessageHandler } from '@/utils/consumer-handler';
+import { IStaticDeployment } from '@/types';
+import { Channel, ConsumeMessage } from 'amqplib';
 
 @Service()
 export class DeploymentConsumer {
-    constructor(@Inject() private readonly amqp: Amqp, @Inject() private readonly webDeployment: WebDeployment) {}
+    constructor(@Inject() private readonly amqp: Amqp, @Inject() private readonly staticDeployment: StaticDeployment) {}
 
     private handleDeployment(channel: Channel) {
         return async (msg: ConsumeMessage | null) => {
             if (!msg) return;
             try {
                 const data = JSON.parse(msg.content.toString()) as IStaticDeployment;
-                console.log(data)
-                await this.webDeployment.start(data, console.log);
-                // channel.ack(msg);
+                await this.staticDeployment.start(data, () => {});
+                channel.ack(msg);
             } catch (error: any) {
                 console.error(error);
             }
