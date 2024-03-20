@@ -19,7 +19,6 @@ export function CreateWebService() {
     const { data: currentRuntime } = useCurrentRuntime(selectedRepo?.language, { enabled: !!selectedRepo });
     const [selectedRuntime, setSelectedRuntime] = useState<string>("");
     const [selectedVersionID, setSelectedVersionID] = useState<number>(0)
-    console.log("🚀 ~ CreateWebService ~ selectedVersionID:", selectedVersionID)
     const {
         register,
         formState: { errors },

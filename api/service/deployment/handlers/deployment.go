@@ -34,24 +34,16 @@ func CreateNewDeployment(c echo.Context) error {
 		AutoDeploy:    body.AutoDeploy,
 		BuildCommand:  body.BuildCommand,
 		RootDirectory: body.RootDirectory,
+		StartCommand:  body.StartCommand,
 		Type:          body.Type,
 		UserID:        user.ID,
 		Status:        "PROGESSING",
 		Domain:        utils.GenerateName(),
-		EnvVariables:  models.JSON(body.EnvVariables),
+		EnvVariables:  body.EnvVariables,
+		RuntimeID:     body.RuntimeID,
 	}
 	if err := db.GetDB().Create(newDeployment).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	if newDeployment.Type == "WEB" {
-		newWebService := models.WebServiceDeployment{
-			DeploymentID: newDeployment.ID,
-			RuntimeID:    body.RuntimeID,
-		}
-		if err := db.GetDB().Create(newWebService).Error; err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-		}
-		newDeployment.WebService = newWebService
 	}
 
 	currentOAuth, err := userRepo.GetOAuthByID(newDeployment.OAuthID)
@@ -59,6 +51,12 @@ func CreateNewDeployment(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	newDeployment.OAuth = *currentOAuth
+
+	currentRuntime := new(models.RuntimeVersion)
+	if err := db.GetDB().Find(&currentRuntime).Where("id = ?", newDeployment.RuntimeID).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	newDeployment.Runtime = *currentRuntime
 
 	branchData, err := github.GetBranchInfo(currentOAuth.AccessToken, currentOAuth.GitUsername, newDeployment.RepoName, newDeployment.Branch)
 	if err != nil {
