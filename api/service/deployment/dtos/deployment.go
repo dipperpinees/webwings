@@ -14,6 +14,7 @@ type CreateDeploymentBody struct {
 	RuntimeID     uint                 `json:"runtime"`
 	AutoDeploy    bool                 `json:"auto_deploy" validate:"required"`
 	BuildCommand  string               `json:"build_command"`
+	StartCommand  string               `json:"start_command"`
 	Branch        string               `json:"branch" validate:"required"`
 	RootDirectory string               `json:"root"`
 	EnvVariables  string               `json:"env_variables"`
