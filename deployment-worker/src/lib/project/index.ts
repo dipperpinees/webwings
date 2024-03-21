@@ -8,10 +8,10 @@ import path from 'path';
 export class Project {
     constructor(@Inject() private readonly config: Config, @Inject() private readonly cmd: Cmd) {}
 
-    clone(id: string, url: string, cb: (log: string) => void) {
+    clone(id: string, url: string, branch: string, cb: (log: string) => void) {
         const dir = path.join(this.config.projectPath, id);
         if (!existsSync(dir)) mkdirSync(dir);
-        return this.cmd.spawnSync('git', ['clone', url, "src"], { cwd: dir }, cb);
+        return this.cmd.spawnSync('git', ['clone', url, "src", "-b", branch], { cwd: dir }, cb);
     }
 
     isExist(id: string) {
@@ -19,16 +19,16 @@ export class Project {
     }
 
     pull(id: string) {
-        return this.cmd.exec(`git pull`, { cwd: path.join(this.config.projectPath, id) });
+        return this.cmd.exec(`git pull`, { cwd: path.join(this.config.projectPath, id, "src") });
     }
 
-    switchBranch(id: string, branch: string) {
-        const cwd = path.join(this.config.projectPath, id);
-        this.cmd.exec(`git fetch origin`, { cwd });
-        this.cmd.exec(`git checkout ${branch}`, { cwd });
+    async switchBranch(id: string, branch: string) {
+        const cwd = path.join(this.config.projectPath, id, "src");
+        await this.cmd.exec(`git fetch origin`, { cwd });
+        await this.cmd.exec(`git checkout ${branch}`, { cwd });
     }
 
-    reset(id: string, hashCommit: string = '') {
-        return this.cmd.exec(`git reset --hard ${hashCommit}`, { cwd: path.join(this.config.projectPath, id) });
+    hardReset(id: string, hashCommit: string = '') {
+        return this.cmd.exec(`git reset --hard ${hashCommit}`, { cwd: path.join(this.config.projectPath, id, "src") });
     }
 }

@@ -1,5 +1,5 @@
 import { WebDeployment } from '@/lib/deployment';
-import { IStaticDeployment } from '@/types';
+import { IDeployment } from '@/types';
 import { Channel, ConsumeMessage } from 'amqplib';
 import { Inject, Service } from 'typedi';
 import Amqp from '../amqp';
@@ -12,7 +12,7 @@ export class DeploymentConsumer {
         return async (msg: ConsumeMessage | null) => {
             if (!msg) return;
             try {
-                const data = JSON.parse(msg.content.toString()) as IStaticDeployment;
+                const data = JSON.parse(msg.content.toString()) as IDeployment;
                 console.log(data)
                 await this.webDeployment.start(data, console.log);
                 // channel.ack(msg);

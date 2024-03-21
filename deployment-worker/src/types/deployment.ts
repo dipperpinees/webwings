@@ -11,7 +11,14 @@ interface IOAuth {
     url: string;
 }
 
-interface IDeployment {
+interface IRuntime {
+    id: number;
+    name: string;
+    tag: string;
+    runtime_name: string;
+}
+
+export interface IDeployment {
     id: string;
     user_id: string;
     oauth: IOAuth;
@@ -20,15 +27,10 @@ interface IDeployment {
     repo_url: string;
     auto_deploy: boolean;
     build_command: string;
+    start_command: string;
     branch: string;
     root: string;
     type: EDeploymentType;
-}
-
-export interface IStaticDeployment extends IDeployment {};
-
-export interface IWebServiceDeployment extends IDeployment {
-    web_service: {
-        runtime: string;
-    }
+    runtime: IRuntime;
+    commit: string;
 }

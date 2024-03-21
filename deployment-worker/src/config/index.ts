@@ -6,7 +6,7 @@ export class Config {
     caddyPath: string ;
     projectPath: string;
     amqpUri: string;
-    dockerhubUser: string;
+    dockerRegistryUser: string;
     constructor() {
         this.caddyPath = path.resolve("caddy");
         this.projectPath = path.resolve("projects");
@@ -15,7 +15,7 @@ export class Config {
             throw new Error("Environment AMQP_URI is undefined")
         }
         this.amqpUri = process.env.AMQP_URI;
-        this.dockerhubUser = process.env.DOCKERHUB_USER as string;
+        this.dockerRegistryUser = process.env.DOCKER_REGISTRY_USER as string;
     }
     
 }
