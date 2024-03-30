@@ -44,8 +44,8 @@ class WebDeployment {
             return []
         }
     }
-
-    private createDockerfile(deployment: IDeployment, cb: (log: string) => void) {
+    
+    async commonDeploy(deployment: IDeployment, cb: (log: string) => void) {
         this.docker.createDockfile(
             this.getWorkdir(deployment),
             deployment.runtime.runtime_name,
@@ -55,16 +55,15 @@ class WebDeployment {
             deployment.root
         )
         cb("Create Dockfile successfully");
-    }
 
-    private async buildImage(deployment: IDeployment, cb: (log: string) => void) {
         await this.docker.buildImage(this.getWorkdir(deployment), deployment.id, "latest", cb, this.getEnvConfig(deployment.env));
         cb("Build image successfully");
-    }
 
-    private async pushImage(deployment: IDeployment, cb: (log: string) => void) {
         await this.docker.pushImage(deployment.id, "latest", cb);
         cb("Push image to Docker registry successfully");
+
+        this.kubectl.createDeployment(deployment.id, `${this.config.dockerRegistryUser}/${deployment.id}:latest`, cb);
+        cb("Create deployment successfully");
     }
 
     async firstDeploy(deployment: IDeployment, cb: (log: string) => void) {
@@ -73,9 +72,7 @@ class WebDeployment {
         await this.project.clone(deployment.id, gitUrl, deployment.branch, cb);
         cb("Clone repo successfully");
 
-        this.createDockerfile(deployment, cb);
-        await this.buildImage(deployment, cb);
-        await this.pushImage(deployment, cb);
+        await this.commonDeploy(deployment, cb);
     }
 
     async freeDeploy(deployment: IDeployment, cb: (log: string) => void) {
@@ -91,9 +88,7 @@ class WebDeployment {
             cb("Reset commit successfully");
         }
 
-        this.createDockerfile(deployment, cb)
-        await this.buildImage(deployment, cb);
-        await this.pushImage(deployment, cb);
+        await this.commonDeploy(deployment, cb);
     }
 
     async cleanWork(deployment: IDeployment) {
@@ -111,6 +106,8 @@ class WebDeployment {
 const logMessageHandler = (log: string) => {
     parentPort?.postMessage({type: "logs", message: log})
 }
+
+parentPort?.postMessage({type: "pid", message: process.pid})
 
 const webDeployment = Container.get(WebDeployment);
 parentPort?.on('message', ({type, message}: {type: string, message: IDeployment}) => {
