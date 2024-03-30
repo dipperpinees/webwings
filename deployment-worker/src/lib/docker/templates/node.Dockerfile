@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/src
+WORKDIR /app/src<workdir>
 
 RUN yarn
 

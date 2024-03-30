@@ -1,0 +1,1 @@
+export type TEnvironmentVariables = {"key": string, "value": string}[]

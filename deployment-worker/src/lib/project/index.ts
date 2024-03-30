@@ -11,7 +11,7 @@ export class Project {
     clone(id: string, url: string, branch: string, cb: (log: string) => void) {
         const dir = path.join(this.config.projectPath, id);
         if (!existsSync(dir)) mkdirSync(dir);
-        return this.cmd.spawnSync('git', ['clone', url, "src", "-b", branch], { cwd: dir }, cb);
+        return this.cmd.spawnSync('git', ['clone', url, "-b", branch, "src"], { cwd: dir }, cb);
     }
 
     isExist(id: string) {

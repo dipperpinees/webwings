@@ -3,7 +3,6 @@ import { useEnvStore } from "@/stores/env";
 import { AddIcon } from "@chakra-ui/icons";
 import { Button, HStack, Icon, Input, Text, VStack, useColorModeValue } from "@chakra-ui/react";
 import { AiOutlineDelete } from "react-icons/ai";
-import { CgFileDocument } from "react-icons/cg";
 
 export function EnvironmentVariable() {
     const env = useEnvStore((state) => state.env);

@@ -33,4 +33,5 @@ export interface IDeployment {
     type: EDeploymentType;
     runtime: IRuntime;
     commit: string;
+    env: string;
 }

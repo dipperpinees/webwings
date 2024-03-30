@@ -14,7 +14,7 @@ export class DeploymentConsumer {
             try {
                 const data = JSON.parse(msg.content.toString()) as IDeployment;
                 console.log(data)
-                await this.webDeployment.start(data, console.log);
+                this.webDeployment.start(data, console.log);
                 // channel.ack(msg);
             } catch (error: any) {
                 console.error(error);
