@@ -137,3 +137,14 @@ func GetBranchInfo(accessToken string, username string, repo string, branch stri
 	body, err := _http.Request[Branch](requestUrl, &_http.RequestOptions{Method: "GET", Headers: &header})
 	return body, err
 }
+
+func RegisterWebhook(accessToken string, username string, repo string) error {
+	requestUrl := fmt.Sprintf("%s/repos/%s/%s/hooks", constant.GITHUB_REST_API_ENDPOINT, username, repo)
+	header := map[string]string{
+		"Accept":        "application/json",
+		"Authorization": "Bearer " + accessToken,
+	}
+	_, err := _http.Request[interface{}](requestUrl, &_http.RequestOptions{Method: "GET", Headers: &header})
+
+	return err
+}

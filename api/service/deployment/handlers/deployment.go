@@ -25,6 +25,16 @@ func CreateNewDeployment(c echo.Context) error {
 	if err := c.Validate(body); err != nil {
 		return err
 	}
+
+	currentOAuth, err := userRepo.GetOAuthByID(body.OAuthID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	branchData, err := github.GetBranchInfo(currentOAuth.AccessToken, currentOAuth.GitUsername, body.RepoName, body.Branch)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	newDeployment := &models.Deployment{
 		Name:          body.Name,
 		OAuthID:       body.OAuthID,
@@ -41,15 +51,12 @@ func CreateNewDeployment(c echo.Context) error {
 		Domain:        utils.GenerateName(),
 		EnvVariables:  body.EnvVariables,
 		RuntimeID:     body.RuntimeID,
+		Commit:        branchData.Commit.SHA,
 	}
 	if err := db.GetDB().Create(newDeployment).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	currentOAuth, err := userRepo.GetOAuthByID(newDeployment.OAuthID)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
 	newDeployment.OAuth = *currentOAuth
 
 	currentRuntime := new(models.RuntimeVersion)
@@ -57,11 +64,6 @@ func CreateNewDeployment(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	newDeployment.Runtime = *currentRuntime
-
-	branchData, err := github.GetBranchInfo(currentOAuth.AccessToken, currentOAuth.GitUsername, newDeployment.RepoName, newDeployment.Branch)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
 
 	// create event
 	eventRepo.CreateEvent(&models.Events{

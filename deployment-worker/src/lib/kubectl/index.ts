@@ -1,59 +1,31 @@
+import { TEnvironmentVariables } from "@/types";
 import { Inject, Service } from "typedi";
-import Cmd from "../cmd";
-import path from "path";
-import { existsSync, unlinkSync, writeFileSync } from "fs";
+import K8sDeployment from "./deployment";
+import K8sService from "./service";
 
 @Service()
 export default class Kubectl {
-    private configDir: string = path.join(__dirname, "./config");
-    constructor(@Inject() private readonly cmd: Cmd) { }
+    constructor(
+        @Inject() private readonly k8sDeployment: K8sDeployment,
+        @Inject() private readonly k8sService: K8sService
+    ) { }
 
-    private createConfig(deploymentName: string, image: string) {
-        const deploymentFilename = deploymentName + ".json";
-        const deploymentFilepath = path.join(this.configDir, deploymentFilename);
-        const deploymentConfig = {
-            "apiVersion": "apps/v1",
-            "kind": "Deployment",
-            "metadata": {
-                "name": deploymentName
-            },
-            "spec": {
-                "selector": {
-                    "matchLabels": {
-                        "app": deploymentName
-                    }
-                },
-                "template": {
-                    "metadata": {
-                        "labels": {
-                            "app": deploymentName
-                        }
-                    },
-                    "spec": {
-                        "containers": [
-                            {
-                                "name": deploymentName,
-                                "image": image
-                            }
-                        ],
-                        "imagePullSecrets": [{
-                            "name": "registrypullsecret"
-                        }]
-                    }
-                }
-            }
+    async start(deploymentName: string, env: TEnvironmentVariables, image: string, cb: (log: string) => void) {
+        const isExistDeployment = await this.k8sDeployment.getDeployments(deploymentName);
+        await this.k8sDeployment.create(deploymentName, image, env, cb);
+
+        if (!isExistDeployment) {
+            await this.k8sDeployment.createAutoscaleDeployment(deploymentName, cb);
         }
-        if (existsSync(deploymentFilepath)) unlinkSync(deploymentFilepath);
-        writeFileSync(deploymentFilepath, JSON.stringify(deploymentConfig));
 
-        return deploymentFilename;
+        await this.k8sDeployment.getPendingPodOfDeploymentStatus(deploymentName);
+        let externalIP = await this.k8sService.getServiceExternalIP("service-" + deploymentName);
+        if (!externalIP) {
+            await this.k8sService.createExposeService(deploymentName, cb);
+            const externalIP = await this.k8sService.getPendingServiceExternalIP(deploymentName);
+            return externalIP;
+        }
+        return externalIP;
     }
 
-    async createDeployment(deploymentName: string, image: string, cb: (log: string) => void) {
-        const configFilename = this.createConfig(deploymentName, image);
-
-        await this.cmd.spawnSync(`kubectl`, ["apply", "-f", configFilename], {
-            cwd: this.configDir
-        }, cb)
-    }
 }

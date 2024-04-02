@@ -11,11 +11,11 @@ export class DeploymentConsumer {
     private handleDeployment(channel: Channel) {
         return async (msg: ConsumeMessage | null) => {
             if (!msg) return;
+            const ack = () => channel.ack(msg);
             try {
                 const data = JSON.parse(msg.content.toString()) as IDeployment;
-                console.log(data)
-                this.webDeployment.start(data, console.log);
-                // channel.ack(msg);
+                this.webDeployment.start(data, console.log, ack);
+                // ack();
             } catch (error: any) {
                 console.error(error);
             }

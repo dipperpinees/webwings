@@ -16,8 +16,8 @@ function importWorker(path: string, options: WorkerOptions) {
 @Service()
 export class WebDeployment {
     constructor(@Inject() private readonly redis: Redis) {}
-    start(deployment: IDeployment, cb: (log: string) => void) {
-        const worker = importWorker(path.join(__dirname, "./__child_process/deployment.cp.ts"), {});
+    start(deployment: IDeployment, cb: (log: string) => void, ack: () => void) {
+        const worker = importWorker(path.join(__dirname, "./__child_process/deployment.worker.ts"), {});
         worker.postMessage({ type: "start", message: deployment });
         worker.on("message", ({ type, message }: { type: string, message: string }) => {
             switch (type) {
@@ -34,10 +34,17 @@ export class WebDeployment {
         })
 
         worker.on("error", (err) => {
+            console.error(err)
         })
 
-        worker.on("exit", () => {
+        worker.on("exit", (code) => {
+            if (code === 0) {
+                console.log("worker successfully")
+            } else {
+                console.log("worker error")
+            }
             this.redis.del(deployment.id + "_pid");
+            ack();
         })
     }
 }

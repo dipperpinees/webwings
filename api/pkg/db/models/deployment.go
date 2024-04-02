@@ -32,5 +32,5 @@ type Deployment struct {
 	EnvVariables  string                 `gorm:"default:'[]'" json:"env"`
 	RuntimeID     uint                   `json:"-"`
 	Runtime       RuntimeVersion         `json:"runtime"`
-	Commit        string                 `gorm:"default:'latest'" json:"commit"`
+	Commit        string                 `json:"commit"`
 }

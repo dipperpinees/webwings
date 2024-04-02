@@ -34,8 +34,8 @@ func generateRefreshToken(user *models.User, c echo.Context) (string, error) {
 	cookie.Path = "/"
 	cookie.HttpOnly = true
 	cookie.Expires = time.Now().AddDate(1, 0, 0)
-	cookie.Secure = true
-	cookie.SameSite = http.SameSiteStrictMode
+	// cookie.Secure = true
+	// cookie.SameSite = http.SameSiteStrictMode
 
 	c.SetCookie(cookie)
 	return newSession.RefreshToken, nil

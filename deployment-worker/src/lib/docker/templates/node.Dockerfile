@@ -10,6 +10,6 @@ WORKDIR /app/src<workdir>
 
 RUN yarn
 
-RUN <build_command>
+<build_command>
 
 CMD <start_command>

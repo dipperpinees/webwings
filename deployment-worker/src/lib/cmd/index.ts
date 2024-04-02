@@ -11,17 +11,23 @@ export default class Cmd {
     spawnSync(command: string, args: string[], options: SpawnOptions = {}, cb: (data: string) => void) {
         const chillProcess = spawn(command, args, options);
         return new Promise((resolve, reject) => {
+            let errMessage = "";
             chillProcess.on('error', function (err) {
                 reject(err);
             });
             chillProcess.on('close', (code) => {
-                resolve(code);
+                if (code === 0) {
+                    resolve(code);
+                } else {
+                    reject(new Error(errMessage));
+                }
             });
             chillProcess!.stdout!.on('data', (data) => {
                 cb(`${data}`);
             });
 
             chillProcess!.stderr!.on('data', (data) => {
+                errMessage += `${data}`;
                 cb(`${data}`);
             });
         });

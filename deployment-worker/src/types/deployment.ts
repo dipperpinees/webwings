@@ -34,4 +34,5 @@ export interface IDeployment {
     runtime: IRuntime;
     commit: string;
     env: string;
+    domain: string;
 }

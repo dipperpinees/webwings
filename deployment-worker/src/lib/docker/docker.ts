@@ -47,7 +47,7 @@ export class Docker {
             case 'Node':
                 dockerFile = this.nodeDockerfileTemplate
                     .replace('<image>', `node:${tag}`)
-                    .replace('<build_command>', buildCommand)
+                    .replace('<build_command>', buildCommand ? `RUN ${buildCommand}`: "")
                     .replace('<start_command>', this.convertCommandToArray(startCommand))
                     .replace('<workdir>', workdir ? `/${workdir}` : "")
                 break;
@@ -58,6 +58,7 @@ export class Docker {
     }
 
     async deleteImage(repository: string, tag: string) {
+        console.log(`docker image rm ${repository}:${tag} -f`)
         await this.cmd.exec(`docker image rm ${repository}:${tag} -f`)
     }
 }
