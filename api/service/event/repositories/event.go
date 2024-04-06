@@ -11,6 +11,6 @@ func CreateEvent(event *models.Events) error {
 
 func GetEventsOfDeployment(deploymentID string) (*[]models.Events, error) {
 	event := new([]models.Events)
-	err := db.GetDB().Find(event).Where("deployment_id = ?", deploymentID).Error
+	err := db.GetDB().Order("updated_at desc").Find(event).Where("deployment_id = ?", deploymentID).Error
 	return event, err
 }

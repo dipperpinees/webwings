@@ -53,12 +53,10 @@ export class Docker {
                 break;
         }
         const dockerFilePath = path.join(_path, 'Dockerfile');
-        if (existsSync(dockerFilePath)) unlinkSync(dockerFilePath);
         writeFileSync(dockerFilePath, dockerFile);
     }
 
     async deleteImage(repository: string, tag: string) {
-        console.log(`docker image rm ${repository}:${tag} -f`)
         await this.cmd.exec(`docker image rm ${repository}:${tag} -f`)
     }
 }

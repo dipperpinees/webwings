@@ -141,10 +141,13 @@ func GetBranchInfo(accessToken string, username string, repo string, branch stri
 func RegisterWebhook(accessToken string, username string, repo string) error {
 	requestUrl := fmt.Sprintf("%s/repos/%s/%s/hooks", constant.GITHUB_REST_API_ENDPOINT, username, repo)
 	header := map[string]string{
-		"Accept":        "application/json",
-		"Authorization": "Bearer " + accessToken,
+		"Accept":               "application/vnd.github+json",
+		"Authorization":        "Bearer " + accessToken,
+		"X-GitHub-Api-Version": "2022-11-28",
 	}
-	_, err := _http.Request[interface{}](requestUrl, &_http.RequestOptions{Method: "GET", Headers: &header})
-
+	body := fmt.Sprintf("{\"name\":\"web\",\"active\":true,\"events\":[\"push\",\"pull_request\"],\"config\":{\"url\":\"%s\",\"content_type\":\"json\",\"insecure_ssl\":\"0\"}}", configs.GetConfigs().PUBLIC_API_URL+"/deployment/webhooks")
+	fmt.Println(body)
+	res, err := _http.Request[interface{}](requestUrl, &_http.RequestOptions{Method: "POST", Headers: &header, Body: body})
+	fmt.Println(*res)
 	return err
 }

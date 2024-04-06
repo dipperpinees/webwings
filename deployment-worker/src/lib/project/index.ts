@@ -19,6 +19,7 @@ export class Project {
     }
 
     pull(id: string) {
+        console.log(path.join(this.config.projectPath, id, "src"))
         return this.cmd.exec(`git pull`, { cwd: path.join(this.config.projectPath, id, "src") });
     }
 

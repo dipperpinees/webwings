@@ -8,7 +8,6 @@ import { IDeployment, TEnvironmentVariables } from "@/types";
 import { existsSync } from "fs";
 import path from "path";
 import Container, { Inject, Service } from "typedi";
-import { parentPort } from 'worker_threads';
 import Cloudflare from '@/lib/cloudflare';
 
 @Service()
@@ -110,18 +109,6 @@ class WebDeployment {
     }
 }
 
-const logMessageHandler = (log: string) => {
-    parentPort?.postMessage({type: "logs", message: log})
-}
-
-parentPort?.postMessage({type: "pid", message: process.pid})
-
 const webDeployment = Container.get(WebDeployment);
-parentPort?.on('message', ({type, message}: {type: string, message: IDeployment}) => {
-    switch(type) {
-        case "start":
-            webDeployment.start(message, logMessageHandler);
-            break;
-        default:
-    }
-});
+const inputData = JSON.parse(process.argv[2]) as IDeployment;
+webDeployment.start(inputData, console.log);

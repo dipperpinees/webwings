@@ -15,6 +15,7 @@ type Configs struct {
 	EMAIL                   string
 	EMAIL_PASSWORD          string
 	AMQP_URI                string
+	PUBLIC_API_URL          string
 }
 
 func GetConfigs() *Configs {

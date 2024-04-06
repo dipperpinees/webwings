@@ -29,6 +29,7 @@ func main() {
 		EMAIL:                   os.Getenv("EMAIL"),
 		EMAIL_PASSWORD:          os.Getenv("EMAIL_PASSWORD"),
 		AMQP_URI:                os.Getenv("AMQP_URI"),
+		PUBLIC_API_URL:          os.Getenv("PUBLIC_API_URL"),
 	})
 	db.InitDB()
 

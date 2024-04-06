@@ -11,6 +11,7 @@ import (
 	"github.com/dipperpinees/ci/pkg/utils"
 	"github.com/dipperpinees/ci/service/deployment/dtos"
 	userRepo "github.com/dipperpinees/ci/service/user/repositories"
+	"gorm.io/gorm"
 
 	eventRepo "github.com/dipperpinees/ci/service/event/repositories"
 	"github.com/labstack/echo/v4"
@@ -47,7 +48,6 @@ func CreateNewDeployment(c echo.Context) error {
 		StartCommand:  body.StartCommand,
 		Type:          body.Type,
 		UserID:        user.ID,
-		Status:        "PROGESSING",
 		Domain:        utils.GenerateName(),
 		EnvVariables:  body.EnvVariables,
 		RuntimeID:     body.RuntimeID,
@@ -65,12 +65,17 @@ func CreateNewDeployment(c echo.Context) error {
 	}
 	newDeployment.Runtime = *currentRuntime
 
+	// register webhooks
+	if err := github.RegisterWebhook(currentOAuth.AccessToken, currentOAuth.GitUsername, newDeployment.RepoName); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// create event
 	eventRepo.CreateEvent(&models.Events{
 		DeploymentID: newDeployment.ID,
-		CommitURL:    branchData.Commit.HtmlUrl,
 		CommitSHA:    branchData.Commit.SHA,
 		Type:         string(enums.INIT_DEPLOY),
+		CommitMsg:    "",
 		AutoTrigger:  true,
 	})
 
@@ -96,7 +101,9 @@ func GetDeploymentByID(c echo.Context) error {
 
 	deployment := new(models.Deployment)
 
-	if err := db.GetDB().Where("id = ?", deploymentID).Preload("OAuth").Preload("Events").First(deployment).Error; err != nil {
+	if err := db.GetDB().Where("id = ?", deploymentID).Preload("Events", func(db *gorm.DB) *gorm.DB {
+		return db.Order("created_at DESC")
+	}).Preload("OAuth").First(deployment).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	deployment.OAuth.AccessToken = ""

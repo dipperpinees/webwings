@@ -1,3 +1,4 @@
+import { PUBLIC_DOMAIN } from "@/configs";
 import { EDeploymentType, IDeployment } from "@/features/services";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
@@ -50,9 +51,9 @@ export function ServicesMonitorHeader({ deployment }: { deployment: IDeployment 
                         <Text fontSize="sm">{deployment.branch}</Text>
                     </HStack>
                 </Link>
-                <Link to={"https://nestjs-boilerplate-7klb.onrender.com"}>
+                <Link to={`https://${deployment.domain}.${PUBLIC_DOMAIN}`} target="_blank">
                     <HStack color="purple.600">
-                        <Text fontSize="sm">https://nestjs-boilerplate-7klb.onrender.com</Text>
+                        <Text fontSize="sm">{deployment.domain}.{PUBLIC_DOMAIN}</Text>
                         <Icon as={LuExternalLink}></Icon>
                     </HStack>
                 </Link>

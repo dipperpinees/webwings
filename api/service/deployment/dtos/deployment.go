@@ -23,3 +23,19 @@ type CreateDeploymentBody struct {
 type GetDeploymentParams struct {
 	ID string `param:"id"`
 }
+
+type GithubRepository struct {
+	HtmlUrl string `json:"html_url"`
+}
+
+type GithubCommit struct {
+	Message string `json:"message"`
+}
+
+type GithubWebhookBody struct {
+	Ref        string           `json:"ref"`
+	Before     string           `json:"before"`
+	After      string           `json:"after"`
+	Repository GithubRepository `json:"repository"`
+	Commit     GithubCommit     `json:"head_commit"`
+}

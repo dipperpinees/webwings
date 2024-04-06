@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model deployments {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at       DateTime?         @db.Timestamptz(6)
+  updated_at       DateTime?         @db.Timestamptz(6)
+  deleted_at       DateTime?         @db.Timestamptz(6)
+  user_id          String?           @db.Uuid
+  o_auth_id        String?           @db.Uuid
+  name             String?
+  repo_name        String?
+  repo_url         String?
+  status           String?
+  auto_deploy      Boolean?
+  build_command    String?
+  start_command    String?
+  branch           String?
+  root_directory   String?
+  type             String?
+  domain           String?           @unique
+  env_variables    String?           @default("[]")
+  runtime_id       BigInt?
+  commit           String?           @default("latest")
+  oauths           oauths?           @relation(fields: [o_auth_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_deployments_o_auth")
+  runtime_versions runtime_versions? @relation(fields: [runtime_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_deployments_runtime")
+  users            users?            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_deployments_user")
+  events           events[]
+
+  @@unique([user_id, name], map: "idx_name_user")
+  @@index([deleted_at], map: "idx_deployments_deleted_at")
+}
+
+model events {
+  id            String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  deployment_id String      @db.Uuid
+  commit_url    String?
+  commit_sha    String?
+  type          String?
+  auto_trigger  Boolean?
+  created_at    DateTime?   @db.Timestamptz(6)
+  updated_at    DateTime?   @db.Timestamptz(6)
+  commit_msg    String?
+  deployments   deployments @relation(fields: [deployment_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_deployments_events")
+
+  @@id([id, deployment_id])
+}
+
+model oauths {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String?       @db.Uuid
+  git_user_id     Int
+  git_username    String?
+  access_token    String?
+  git_profile_url String?
+  git_email       String?
+  git_name        String?
+  git_avatar_url  String?
+  created_at      DateTime?     @db.Timestamptz(6)
+  updated_at      DateTime?     @db.Timestamptz(6)
+  deployments     deployments[]
+  users           users?        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_oauths_user")
+
+  @@unique([user_id, git_username], map: "idx_userid_username")
+}
+
+model reset_passwords {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  secret_key String?
+  user_id    String?   @db.Uuid
+  active     Boolean?
+  created_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime? @db.Timestamptz(6)
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reset_passwords_user")
+}
+
+model runtime_versions {
+  id           BigInt        @id @default(autoincrement())
+  name         String?
+  tag          String?
+  runtime_name String?
+  created_at   DateTime?     @db.Timestamptz(6)
+  updated_at   DateTime?     @db.Timestamptz(6)
+  deployments  deployments[]
+  runtimes     runtimes?     @relation(fields: [runtime_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "fk_runtimes_versions")
+}
+
+model runtimes {
+  name             String             @id
+  image            String?
+  build_command    String?
+  start_command    String?
+  created_at       DateTime?          @db.Timestamptz(6)
+  updated_at       DateTime?          @db.Timestamptz(6)
+  runtime_versions runtime_versions[]
+}
+
+model sessions {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String?   @db.Uuid
+  refresh_token String    @unique
+  active        Boolean?  @default(true)
+  created_at    DateTime? @db.Timestamptz(6)
+  updated_at    DateTime? @db.Timestamptz(6)
+  users         users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sessions_user")
+
+  @@index([refresh_token], map: "idx_sessions_refresh_token")
+}
+
+model users {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email           String            @unique
+  name            String?
+  password        String?
+  created_at      DateTime?         @db.Timestamptz(6)
+  updated_at      DateTime?         @db.Timestamptz(6)
+  deployments     deployments[]
+  oauths          oauths[]
+  reset_passwords reset_passwords[]
+  sessions        sessions[]
+}

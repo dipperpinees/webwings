@@ -8,8 +8,8 @@ export enum EEventType {
 
 export interface IEvent {
     id: string;
-    commit_url: string;
     commit_sha: string;
+    commit_msg: string;
     type: EEventType;
     auto_trigger: boolean;
     created_at: string;

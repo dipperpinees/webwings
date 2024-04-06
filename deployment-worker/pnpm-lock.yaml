@@ -32,6 +32,9 @@ dependencies:
   reflect-metadata:
     specifier: ^0.2.1
     version: 0.2.1
+  tree-kill:
+    specifier: ^1.2.2
+    version: 1.2.2
   typedi:
     specifier: ^0.10.0
     version: 0.10.0
@@ -3260,6 +3263,11 @@ packages:
     dependencies:
       nopt: 1.0.10
     dev: true
+
+  /tree-kill@1.2.2:
+    resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
+    hasBin: true
+    dev: false
 
   /ts-jest@29.1.1(@babel/core@7.23.6)(jest@29.7.0)(typescript@5.3.3):
     resolution: {integrity: sha512-D6xjnnbP17cC85nliwGiL+tpoKN0StpgE0TeOjXQTU6MVCfsB4v7aW05CgQ/1OywGb0x/oy9hHFnN+sczTiRaA==}

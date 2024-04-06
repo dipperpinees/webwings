@@ -1,6 +1,7 @@
 package _http
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -13,7 +14,7 @@ type RequestOptions struct {
 }
 
 func Request[T any](url string, options *RequestOptions) (*T, error) {
-	req, err := http.NewRequest(options.Method, url, nil)
+	req, err := http.NewRequest(options.Method, url, bytes.NewBuffer([]byte(options.Body)))
 	if err != nil {
 		return nil, err
 	}

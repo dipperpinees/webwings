@@ -8,6 +8,9 @@ export $(shell sed 's/=.*//' .env)
 run:
 	nodemon --exec go run cmd/server/main.go --signal SIGTERM
 
+run-consumer:
+	nodemon --exec go run cmd/consumer/main.go --signal SIGTERM
+
 migrate:
 	go run cmd/db/main.go migrate --signal SIGTERM
 

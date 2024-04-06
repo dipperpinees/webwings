@@ -11,11 +11,9 @@ export class DeploymentConsumer {
     private handleDeployment(channel: Channel) {
         return async (msg: ConsumeMessage | null) => {
             if (!msg) return;
-            const ack = () => channel.ack(msg);
             try {
                 const data = JSON.parse(msg.content.toString()) as IDeployment;
-                this.webDeployment.start(data, console.log, ack);
-                // ack();
+                this.webDeployment.start(data, console.log);
             } catch (error: any) {
                 console.error(error);
             }
@@ -30,7 +28,7 @@ export class DeploymentConsumer {
         });
 
         channel.consume(QUEUE_NAME, this.handleDeployment(channel), {
-            noAck: false,
+            noAck: true,
         });
     }
 }

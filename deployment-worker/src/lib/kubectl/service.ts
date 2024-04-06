@@ -6,7 +6,7 @@ export default class K8sService {
     constructor(@Inject() private readonly cmd: Cmd) {}
 
     async createExposeService(deploymentName: string, cb: (log: string) => void) {
-        await this.cmd.spawnSync(`kubectl`, ["expose", "deployment", deploymentName, `--name=service-${deploymentName}`, "--type=LoadBalancer", "--port", "80", "--target-port", "8000"], {}, cb)
+        await this.cmd.spawnSync(`/bin/bash`, ["-c", `kubectl expose deployment ${deploymentName} --name=service-${deploymentName} --type=LoadBalancer --port 80 --target-port 8000`], {}, cb)
         cb("Create expose service successfully");
     }
 
@@ -30,11 +30,12 @@ export default class K8sService {
     }
 
     async getServiceExternalIP(serviceName: string) {
-        const { stdout } = await this.cmd.exec(`kubectl get service ${serviceName} --ignore-not-found -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'`);
+        const { stdout } = await this.cmd.exec(`/bin/bash -c "kubectl get service ${serviceName} --ignore-not-found -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'"`);
+        console.log("🚀 ~ K8sService ~ getServiceExternalIP ~ stdout:", stdout)
         return stdout.trim();
     }
 
     async deleteService(serviceName: string) {
-        await this.cmd.exec(`kubectl delete service ${serviceName} --ignore-not-found`);
+        await this.cmd.exec(`/bin/bash -c "kubectl delete service ${serviceName} --ignore-not-found"`);
     }
 }

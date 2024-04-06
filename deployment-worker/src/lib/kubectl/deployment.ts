@@ -65,13 +65,13 @@ export default class K8sDeployment {
     async create(deploymentName: string, image: string, env: TEnvironmentVariables, cb: (log: string) => void) {
         const configFilename = this.createConfig(deploymentName, image, env);
 
-        await this.cmd.spawnSync(`kubectl`, ["apply", "-f", configFilename], {
+        await this.cmd.spawnSync(`/bin/bash`, ["-c", `kubectl apply -f ${configFilename}`], {
             cwd: this.configDir,
         }, cb)
     }
 
     async getDeployments(deploymentName: string) {
-        const { stdout } = await this.cmd.exec(`kubectl get deployment ${deploymentName} --ignore-not-found`);
+        const { stdout } = await this.cmd.exec(`/bin/bash -c "kubectl get deployment ${deploymentName} --ignore-not-found"`);
         const _stdout = stdout.trim();
         if (!_stdout) return;
         
@@ -86,15 +86,16 @@ export default class K8sDeployment {
     }
 
     async createAutoscaleDeployment(deploymentName: string, cb: (log: string) => void) {
-        await this.cmd.spawnSync(`kubectl`, ["autoscale", "deployment", deploymentName, "--cpu-percent=80", "--min=1", "--max=5"], {}, cb)
+        await this.cmd.spawnSync(`/bin/bash`, ["-c", `kubectl autoscale deployment ${deploymentName} --cpu-percent=80 --min=1 --max=5`], {}, cb)
     }
 
     async deleteAutoscaleDeployment(hpaName: string) {
-        await this.cmd.exec(`kubectl delete hpa ${hpaName} --ignore-not-found`);
+        await this.cmd.exec(`/bin/bash -c "kubectl delete hpa ${hpaName} --ignore-not-found"`);
     }
 
     async deleteDeployment(deploymentName: string) {
-        await this.cmd.exec(`kubectl delete deployment ${deploymentName} --ignore-not-found`);
+        await this.cmd.exec(`/bin/bash -c "kubectl delete deployment ${deploymentName} --ignore-not-found"`);
+        await this.cmd.exec(`/bin/bash -c "kubectl delete --all pods --namespace=${deploymentName}"`);
     }
 
     async getPendingPodOfDeploymentStatus(deploymentName: string) {
@@ -129,7 +130,7 @@ export default class K8sDeployment {
     }
 
     async getPodOfDeploymentStatus(deploymentName: string) {
-        const {stdout} = await this.cmd.exec(`kubectl get pods -l app=${deploymentName}`);
+        const {stdout} = await this.cmd.exec(`/bin/bash -c "kubectl get pods -l app=${deploymentName}"`);
         const _stdout = stdout.trim();
         const logArr = _stdout.split(/(\s+)/).filter(str => !!str.trim());
         return logArr[7];
