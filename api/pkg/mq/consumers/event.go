@@ -18,7 +18,7 @@ func failOnError(err error, msg string) {
 }
 
 type EventMsg struct {
-	DeploymentID uuid.UUID       `json:"deploymentID"`
+	DeploymentID uuid.UUID       `json:"deployment_id"`
 	Commit_sha   string          `json:"commit_sha"`
 	Type         enums.EventType `json:"type"`
 }
@@ -32,7 +32,7 @@ func eventConsumerHandler() {
 
 	q, err := ch.QueueDeclare(
 		QUEUE_NAME, // name
-		false,      // durable
+		true,       // durable
 		false,      // delete when unused
 		false,      // exclusive
 		false,      // no-wait

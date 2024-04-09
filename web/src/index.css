@@ -4,3 +4,20 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.log-box {
+  overflow: auto;
+}
+
+.log-box::-webkit-scrollbar {
+  width: 12px;
+}
+
+.log-box::-webkit-scrollbar-track {
+  background-color: #21232E;
+}
+
+.log-box::-webkit-scrollbar-thumb {
+  background-color: #606476;
+}
+​

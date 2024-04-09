@@ -1,5 +1,5 @@
 import { IOAuth } from "@/features/select-repo";
-import { IEvent, IRuntime } from ".";
+import { IEvent, IRuntimeVersion } from ".";
 
 export enum EDeploymentType {
     STATIC = "STATIC",
@@ -18,7 +18,7 @@ export interface IDeployment {
     repo: string;
     name: string;
     repo_url: string;
-    runtime: IRuntime;
+    runtime: IRuntimeVersion;
     auto_deploy: boolean;
     build_command: string;
     branch: string;

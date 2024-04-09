@@ -75,7 +75,7 @@ func CreateNewDeployment(c echo.Context) error {
 		DeploymentID: newDeployment.ID,
 		CommitSHA:    branchData.Commit.SHA,
 		Type:         string(enums.INIT_DEPLOY),
-		CommitMsg:    "",
+		CommitMsg:    branchData.Commit.Commit.Message,
 		AutoTrigger:  true,
 	})
 
@@ -89,7 +89,14 @@ func GetDeploymentList(c echo.Context) error {
 	user, _ := c.Get("user").(*models.User)
 
 	deploymentList := new([]models.Deployment)
-	if err := db.GetDB().Order("updated_at desc").Find(deploymentList).Where("user_id = ?", user.ID).Preload("WebService").Error; err != nil {
+	if err := db.GetDB().
+		Order("updated_at desc").
+		Preload("Runtime").
+		Preload("Events", func(db *gorm.DB) *gorm.DB {
+			return db.Order("created_at DESC").Limit(1)
+		}).
+		Find(deploymentList).
+		Where("user_id = ?", user.ID).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 

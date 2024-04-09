@@ -1,4 +1,4 @@
-import { EEvent, IDeployment } from "@/types";
+import { EEvent, ELogType, IDeployment } from "@/types";
 import path from "node:path";
 import { Worker, WorkerOptions } from "node:worker_threads";
 import { Inject, Service } from "typedi";
@@ -7,15 +7,6 @@ import { Producer } from "../amqp/producers";
 import kill from "tree-kill";
 import { spawn } from "node:child_process";
 
-function importWorker(path: string, options: WorkerOptions) {
-    const resolvedPath = require.resolve(path);
-    return new Worker(resolvedPath, {
-        ...options,
-        execArgv: /\.ts$/.test(resolvedPath) ? ["--require", "ts-node/register"] : undefined,
-        env: process.env
-    });
-}
-
 @Service()
 export class WebDeployment {
     constructor(
@@ -23,7 +14,6 @@ export class WebDeployment {
         @Inject() private readonly producer: Producer
     ) {}
     async start(deployment: IDeployment, cb: (log: string) => void) {
-        console.log("🚀 ~ WebDeployment ~ start ~ deployment:", deployment)
         const previousPid = await this.redis.get(deployment.id + "_pid");
         if (previousPid) {
             try {
@@ -38,60 +28,48 @@ export class WebDeployment {
         });
         childProcess.stdout.on('data', (data) => {
             cb(`${data}`.trim());
+            this.producer.sendBuildLog({
+                time: new Date(),
+                message: `${data}`.trim(),
+                type: ELogType.INFO,
+                deployment_id: deployment.id
+            })
         });
         childProcess.stderr.on('data', (data) => {
             cb(`${data}`.trim());
+            this.producer.sendBuildLog({
+                time: new Date(),
+                message: `${data}`.trim(),
+                type: ELogType.ERROR,
+                deployment_id: deployment.id
+            })
         });
         childProcess.on('close', async (code) => {
             this.redis.del(deployment.id + "_pid");
             if (code === 0) {
                 await this.producer.sendEvent({
                     type: EEvent.DEPLOY_SUCCESS,
-                    deploymentID: deployment.id,
-                    commit_sha: deployment.commit
+                    deployment_id: deployment.id,
+                    commit_sha: deployment.commit,
+                    auto_trigger: true
                 })
             }
             if (code === 1) {
                 await this.producer.sendEvent({
                     type: EEvent.DEPLOY_FAILED,
-                    deploymentID: deployment.id,
-                    commit_sha: deployment.commit
+                    deployment_id: deployment.id,
+                    commit_sha: deployment.commit,
+                    auto_trigger: true
+                })
+            }
+            if (code === null) {
+                await this.producer.sendEvent({
+                    type: EEvent.DEPLOY_CANCEL,
+                    deployment_id: deployment.id,
+                    commit_sha: deployment.commit,
+                    auto_trigger: true
                 })
             }
         }); 
-        // const worker = importWorker(path.join(__dirname, "./__child_process/deployment.worker.ts"), {});
-        // this.redis.set(deployment.id + "_pid", worker.threadId, {
-        //     EX: 10 * 60
-        // });
-        // worker.postMessage({ type: "start", message: deployment });
-        // worker.on("message", ({ type, message }: { type: string, message: string }) => {
-        //     switch (type) {
-        //         case "logs":
-        //             cb(message?.trim());
-        //             break;
-        //         default:
-        //     }
-        // })
-
-        // worker.on("error", (err) => {
-        //     console.error(err)
-        // })
-
-        // worker.on("exit", async (code) => {
-        //     if (code === 0) {
-        //         await this.producer.sendEvent({
-        //             type: EEvent.DEPLOY_SUCCESS,
-        //             deploymentID: deployment.id,
-        //             commit_sha: deployment.commit
-        //         })
-        //     } else {
-        //         await this.producer.sendEvent({
-        //             type: EEvent.DEPLOY_FAILED,
-        //             deploymentID: deployment.id,
-        //             commit_sha: deployment.commit
-        //         })
-        //     }
-        //     this.redis.del(deployment.id + "_pid");
-        // })
     }
 }

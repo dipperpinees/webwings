@@ -7,7 +7,8 @@ export enum EEvent {
 }
 
 export interface IEvent {
-    deploymentID: string;
+    deployment_id: string;
     commit_sha: string;
     type: EEvent;
+    auto_trigger: boolean;
 }

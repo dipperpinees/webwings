@@ -31,7 +31,6 @@ export default class K8sService {
 
     async getServiceExternalIP(serviceName: string) {
         const { stdout } = await this.cmd.exec(`/bin/bash -c "kubectl get service ${serviceName} --ignore-not-found -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'"`);
-        console.log("🚀 ~ K8sService ~ getServiceExternalIP ~ stdout:", stdout)
         return stdout.trim();
     }
 

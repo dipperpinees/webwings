@@ -175,7 +175,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 ) : null}
             </Box>
 
-            <Box marginTop="64px">{children}</Box>
+            <Box paddingTop="64px" minHeight="calc(100vh - 72px);">{children}</Box>
             <Footer />
         </>
     );

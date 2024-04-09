@@ -12,12 +12,9 @@ export default class Kubectl {
 
     async start(deploymentName: string, env: TEnvironmentVariables, image: string, cb: (log: string) => void) {
         await this.k8sDeployment.deleteDeployment(deploymentName);
-        // const isExistDeployment = await this.k8sDeployment.getDeployments(deploymentName);
         await this.k8sDeployment.create(deploymentName, image, env, cb);
 
-        // if (!isExistDeployment) {
-        //     await this.k8sDeployment.createAutoscaleDeployment(deploymentName, cb);
-        // }
+        await this.k8sDeployment.createAutoscaleDeployment(deploymentName, cb);
 
         await this.k8sDeployment.getPendingPodOfDeploymentStatus(deploymentName);
         let externalIP = await this.k8sService.getServiceExternalIP("service-" + deploymentName);

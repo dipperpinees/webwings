@@ -10,8 +10,6 @@ import (
 	"github.com/dipperpinees/ci/pkg/mq"
 	"github.com/dipperpinees/ci/service/deployment/dtos"
 	"github.com/labstack/echo/v4"
-
-	eventRepo "github.com/dipperpinees/ci/service/event/repositories"
 )
 
 func GithubWebhooks(c echo.Context) error {
@@ -45,7 +43,7 @@ func GithubWebhooks(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
-		eventRepo.CreateEvent(&models.Events{
+		mq.SendToQueue("EVENT", &models.Events{
 			DeploymentID: deployment.ID,
 			CommitSHA:    body.After,
 			Type:         string(enums.NEW_DEPLOY),
@@ -53,7 +51,7 @@ func GithubWebhooks(c echo.Context) error {
 			AutoTrigger:  true,
 		})
 
-		mq.SendToQueue("DEPLOYMENT", deployment)
+		// mq.SendToQueue("DEPLOYMENT", deployment)
 	}
 
 	return nil

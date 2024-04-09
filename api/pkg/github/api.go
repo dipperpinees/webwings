@@ -52,10 +52,15 @@ type Repository struct {
 	Owner           RepositoryOwner `json:"owner"`
 }
 
+type NestedCommit struct {
+	Message string `json:"message"`
+}
+
 type Commit struct {
-	SHA     string `json:"sha"`
-	URL     string `json:"url"`
-	HtmlUrl string `json:"html_url"`
+	SHA     string       `json:"sha"`
+	URL     string       `json:"url"`
+	HtmlUrl string       `json:"html_url"`
+	Commit  NestedCommit `json:"commit"`
 }
 
 type Branch struct {
@@ -146,8 +151,6 @@ func RegisterWebhook(accessToken string, username string, repo string) error {
 		"X-GitHub-Api-Version": "2022-11-28",
 	}
 	body := fmt.Sprintf("{\"name\":\"web\",\"active\":true,\"events\":[\"push\",\"pull_request\"],\"config\":{\"url\":\"%s\",\"content_type\":\"json\",\"insecure_ssl\":\"0\"}}", configs.GetConfigs().PUBLIC_API_URL+"/deployment/webhooks")
-	fmt.Println(body)
-	res, err := _http.Request[interface{}](requestUrl, &_http.RequestOptions{Method: "POST", Headers: &header, Body: body})
-	fmt.Println(*res)
+	_, err := _http.Request[interface{}](requestUrl, &_http.RequestOptions{Method: "POST", Headers: &header, Body: body})
 	return err
 }

@@ -5,7 +5,7 @@ import { useEnvStore } from "@/stores/env";
 import { Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useBranchesList, useCreateDeployment, useCurrentRuntime, useRuntimesList } from "../../../api";
 import { AdvancedConfig, BuildCommand, SelectBranch, SelectDirectory, SelectRuntime, ServiceName, StartCommand } from "../Form";
 
@@ -31,7 +31,8 @@ export function CreateWebService() {
     const setEnv = useEnvStore(state => state.updateEnv);
     const toast = useToast();
     const {mutateAsync: createDeployment} = useCreateDeployment();
-    
+    const navigate = useNavigate();
+
     useEffect(() => {
         const foundBuildCommand = runtimesData?.find(({name}) => name === selectedRuntime)?.build_command;
         const foundStartCommand = runtimesData?.find(({name}) => name === selectedRuntime)?.start_command;
@@ -60,7 +61,7 @@ export function CreateWebService() {
     const onSubmit: SubmitHandler<ICreateDeployment> = async (data) => {
         setIsLoading(true);
         try {
-            await createDeployment({
+            const newDeployment = await createDeployment({
                 ...data,
                 auto_deploy: !!data.auto_deploy,
                 repo_url: selectedRepo.html_url,
@@ -76,6 +77,7 @@ export function CreateWebService() {
                 duration: 3000,
                 isClosable: true,
             });
+            navigate(`/app/services/monitor/${newDeployment.id}`)
         } catch (error) {
             let message = "Create web service failed";
             if (error instanceof Error) message = error.message;

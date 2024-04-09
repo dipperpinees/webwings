@@ -8,7 +8,7 @@ import (
 
 type Events struct {
 	ID           uuid.UUID  `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
-	DeploymentID uuid.UUID  `gorm:"primaryKey" json:"deploymentID"`
+	DeploymentID uuid.UUID  `gorm:"primaryKey" json:"deployment_id"`
 	Deployment   Deployment `json:"-"`
 	CommitSHA    string     `json:"commit_sha"`
 	CommitMsg    string     `json:"commit_msg"`

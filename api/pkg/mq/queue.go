@@ -31,7 +31,6 @@ func SendToQueue(queueName string, message interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

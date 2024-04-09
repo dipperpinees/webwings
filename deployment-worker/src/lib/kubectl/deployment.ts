@@ -86,7 +86,9 @@ export default class K8sDeployment {
     }
 
     async createAutoscaleDeployment(deploymentName: string, cb: (log: string) => void) {
-        await this.cmd.spawnSync(`/bin/bash`, ["-c", `kubectl autoscale deployment ${deploymentName} --cpu-percent=80 --min=1 --max=5`], {}, cb)
+        try {
+            await this.cmd.spawnSync(`/bin/bash`, ["-c", `kubectl autoscale deployment ${deploymentName} --cpu-percent=80 --min=1 --max=5`], {}, cb)
+        } catch (err) {}
     }
 
     async deleteAutoscaleDeployment(hpaName: string) {

@@ -43,10 +43,10 @@ export function DeploymentTable({ data, onClickItem }: IDeploymentTable) {
                                 </Flex>
                             </Td>
                             <Td>
-                                <DeploymentStatus status={item.status} />
+                                <DeploymentStatus eventType={item.event?.[0]?.type} />
                             </Td>
                             <Td>{capitalizeFirstLetter(item.type)}</Td>
-                            <Td>{item.type === EDeploymentType.STATIC ? "Static" : ""}</Td>
+                            <Td>{item.runtime.runtime_name}</Td>
                             <Td>{getTimeAgo(new Date(item.updated_at))}</Td>
                             <Td paddingInlineStart="var(--chakra-space-2)" onClick={(e) => e.stopPropagation()}>
                                 <Menu>

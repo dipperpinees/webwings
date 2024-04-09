@@ -1,4 +1,4 @@
-import { IEvent } from '@/types';
+import { IEvent, ILog } from '@/types';
 import { Inject, Service } from 'typedi';
 import amqp from '../amqp';
 import Amqp from '../amqp';
@@ -11,9 +11,19 @@ export class Producer {
         const channel = await this.amqp.createChannel();
         const QUEUE_NAME = 'EVENT';
         await channel.assertQueue(QUEUE_NAME, {
-            durable: false,
+            durable: true,
         });
 
         channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(event)))
+    }
+
+    async sendBuildLog(log: ILog) {
+        const channel = await this.amqp.createChannel();
+        const QUEUE_NAME = 'BUILD_LOGS';
+        await channel.assertQueue(QUEUE_NAME, {
+            durable: false,
+        });
+
+        channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(log)))
     }
 }

@@ -28,7 +28,7 @@ export class DeploymentConsumer {
         });
 
         channel.consume(QUEUE_NAME, this.handleDeployment(channel), {
-            noAck: true,
+            noAck: false,
         });
     }
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/dipperpinees/ci/configs"
@@ -18,7 +17,6 @@ func main() {
 	})
 	db.InitDB()
 	args := os.Args[1]
-	fmt.Println(args)
 	if args == "migrate" {
 		db.Migrate()
 	}
