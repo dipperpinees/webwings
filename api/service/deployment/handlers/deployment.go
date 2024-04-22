@@ -116,3 +116,72 @@ func GetDeploymentByID(c echo.Context) error {
 	deployment.OAuth.AccessToken = ""
 	return c.JSON(http.StatusOK, deployment)
 }
+
+func UpdateDeployment(c echo.Context) error {
+	deploymentID := c.Param("id")
+	body := new(dtos.UpdateDeploymentBody)
+	if err := c.Bind(&body); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	lastDeployment := new(models.Deployment)
+	if err := db.GetDB().Where("id = ?", deploymentID).Preload("OAuth").Preload("Runtime").First(&lastDeployment).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	if body.Name != "" {
+		lastDeployment.Name = body.Name
+	}
+	if body.BuildCommand != "" {
+		lastDeployment.BuildCommand = body.BuildCommand
+	}
+	if body.StartCommand != "" {
+		lastDeployment.StartCommand = body.StartCommand
+	}
+	lastDeployment.AutoDeploy = body.AutoDeploy
+	if body.EnvVariables != "" {
+		lastDeployment.EnvVariables = body.EnvVariables
+	}
+	lastDeployment.RootDirectory = body.RootDirectory
+
+	newCommitMsg := ""
+	if lastDeployment.Branch != body.Branch {
+		branchData, err := github.GetBranchInfo(lastDeployment.OAuth.AccessToken, lastDeployment.OAuth.GitUsername, lastDeployment.RepoName, body.Branch)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+		lastDeployment.Branch = body.Branch
+		lastDeployment.Commit = branchData.Commit.SHA
+		newCommitMsg = branchData.Commit.Commit.Message
+	} else {
+		latestEvent := new(models.Events)
+		if err := db.GetDB().Where("deployment_id = ?", deploymentID).Last(latestEvent).Error; err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+		newCommitMsg = latestEvent.CommitMsg
+	}
+
+	if err := db.GetDB().Save(lastDeployment).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	mq.SendToQueue("EVENT", &models.Events{
+		DeploymentID: lastDeployment.ID,
+		CommitSHA:    lastDeployment.Commit,
+		Type:         string(enums.NEW_DEPLOY),
+		CommitMsg:    newCommitMsg,
+		AutoTrigger:  true,
+	})
+
+	mq.SendToQueue("DEPLOYMENT", lastDeployment)
+
+	lastDeployment.OAuth.AccessToken = ""
+	return c.JSON(http.StatusOK, lastDeployment)
+}
+
+func SuspendDeployment(c echo.Context) error {
+	deploymentID := c.Param("id")
+	mq.SendToQueue("SUSPEND_DEPLOYMENT", deploymentID)
+
+	return c.JSON(http.StatusOK, "Suspend deployment successfully")
+}

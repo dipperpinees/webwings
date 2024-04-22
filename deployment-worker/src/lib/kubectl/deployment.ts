@@ -87,7 +87,7 @@ export default class K8sDeployment {
 
     async createAutoscaleDeployment(deploymentName: string, cb: (log: string) => void) {
         try {
-            await this.cmd.spawnSync(`/bin/bash`, ["-c", `kubectl autoscale deployment ${deploymentName} --cpu-percent=80 --min=1 --max=5`], {}, cb)
+            await this.cmd.spawnSync(`/bin/bash`, ["-c", `kubectl autoscale deployment ${deploymentName} --cpu-percent=80 --min=1 --max=5`], {}, () => {})
         } catch (err) {}
     }
 
@@ -136,5 +136,9 @@ export default class K8sDeployment {
         const _stdout = stdout.trim();
         const logArr = _stdout.split(/(\s+)/).filter(str => !!str.trim());
         return logArr[7];
+    }
+
+    async delete(deploymentName: string) {
+        await this.cmd.exec(`/bin/bash -c "kubectl scale deployment ${deploymentName} --replicas=0"`);
     }
 }

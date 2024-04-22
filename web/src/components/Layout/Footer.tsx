@@ -31,7 +31,7 @@ export default function Footer() {
         <Box bg={useColorModeValue("gray.50", "gray.900")} color={useColorModeValue("gray.700", "gray.200")}>
             <HStack
                 width="100%"
-                pb={10}
+                py={6}
                 px={8}
                 spacing={4}
                 justify="space-between"

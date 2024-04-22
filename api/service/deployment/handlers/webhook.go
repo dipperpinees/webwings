@@ -51,7 +51,7 @@ func GithubWebhooks(c echo.Context) error {
 			AutoTrigger:  true,
 		})
 
-		// mq.SendToQueue("DEPLOYMENT", deployment)
+		mq.SendToQueue("DEPLOYMENT", deployment)
 	}
 
 	return nil

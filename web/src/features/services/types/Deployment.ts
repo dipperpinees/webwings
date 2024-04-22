@@ -33,7 +33,7 @@ export interface IDeployment {
     commit_sha: string;
     event: IEvent[];
     start_command: string;
-    env_variables: IEnvironment[];
+    env: string;
 }
 
 export interface ICreateDeployment {
@@ -42,7 +42,7 @@ export interface ICreateDeployment {
     name: string;
     repo_url: string;
     runtime: number;
-    auto_deploy: boolean;
+    auto_deploy: boolean | string;
     build_command: string;
     branch: string;
     root: string;
@@ -51,7 +51,23 @@ export interface ICreateDeployment {
     env_variables: string;
 }
 
+export interface IUpdateDeployment {
+    id: string;
+    name: string;
+    auto_deploy: boolean | string;
+    build_command: string;
+    branch: string;
+    root: string;
+    start_command: string;
+    env_variables: string;
+}
+
 export interface IEnvironment {
     key: string;
     value: string;
+}
+
+export enum ELogBoxType {
+    "BUILD" = "BUILD",
+    "APP" = "APP"
 }

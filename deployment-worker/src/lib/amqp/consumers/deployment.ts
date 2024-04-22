@@ -20,15 +20,42 @@ export class DeploymentConsumer {
         };
     }
 
-    async init() {
-        const channel = await this.amqp.createChannel();
+    private suspendDeployment(channel: Channel) {
+        return async (msg: ConsumeMessage | null) => {
+            if (!msg) return;
+            try {
+                await this.webDeployment.suspend(msg.content.toString());
+            } catch (error: any) {
+                console.error(error);
+            }
+        };
+    }
+
+    async initCreateDeploymentQueue(channel: Channel) {
         const QUEUE_NAME = 'DEPLOYMENT';
         await channel.assertQueue(QUEUE_NAME, {
             durable: true,
         });
 
         channel.consume(QUEUE_NAME, this.handleDeployment(channel), {
-            noAck: false,
+            noAck: true,
         });
+    }
+
+    async initSuspendDeploymentQueue(channel: Channel) {
+        const QUEUE_NAME = 'SUSPEND_DEPLOYMENT';
+        await channel.assertQueue(QUEUE_NAME, {
+            durable: true,
+        });
+
+        channel.consume(QUEUE_NAME, this.suspendDeployment(channel), {
+            noAck: true,
+        });
+    }
+
+    async init() {
+        const channel = await this.amqp.createChannel();
+        await this.initCreateDeploymentQueue(channel);
+        await this.initSuspendDeploymentQueue(channel);
     }
 }

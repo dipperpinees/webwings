@@ -19,7 +19,7 @@ export default async function initEventConsumer(io: Server<DefaultEventsMap, Def
             if (msg) {
                 try {
                     const data = JSON.parse(msg.content.toString()) as Prisma.eventsCreateInput;
-                    if (!data.commit_msg) {
+                    if (!data.commit_msg || !data.commit_sha) {
                         const lastestEvent = await prisma.events.findMany({
                             where: {
                                 deployment_id: data.id
@@ -30,6 +30,7 @@ export default async function initEventConsumer(io: Server<DefaultEventsMap, Def
                             take: 1,
                         });
                         data.commit_msg = lastestEvent?.[0].commit_msg;
+                        data.commit_sha = lastestEvent?.[0].commit_sha;
                     }
                     const newEvent = await prisma.events.create({
                         data: {

@@ -18,6 +18,12 @@ export class WebDeployment {
         if (previousPid) {
             try {
                 kill(parseInt(previousPid));
+                await this.producer.sendEvent({
+                    type: EEvent.DEPLOY_CANCEL,
+                    deployment_id: deployment.id,
+                    commit_sha: deployment.commit,
+                    auto_trigger: true
+                })
             } catch (err) {}
         }
         const childProcess = spawn("npx", ["ts-node", path.join(__dirname, "./__child_process/deployment.worker.ts"), JSON.stringify(deployment)], {
@@ -62,11 +68,32 @@ export class WebDeployment {
                     auto_trigger: true
                 })
             }
-            if (code === null) {
+        }); 
+    }
+
+    async suspend(deploymentID: string) {
+        const previousPid = await this.redis.get(deploymentID + "_pid");
+        if (previousPid) {
+            try {
+                kill(parseInt(previousPid));
                 await this.producer.sendEvent({
                     type: EEvent.DEPLOY_CANCEL,
-                    deployment_id: deployment.id,
-                    commit_sha: deployment.commit,
+                    deployment_id: deploymentID,
+                    commit_sha: "",
+                    auto_trigger: true
+                })
+                this.redis.del(deploymentID + "_pid");
+            } catch (err) {}
+        }
+        const childProcess = spawn("npx", ["ts-node", path.join(__dirname, "./__child_process/suspend.worker.ts"), deploymentID], {
+            env: process.env
+        })
+        childProcess.on('close', async (code) => {
+            if (code === 1) {
+                await this.producer.sendEvent({
+                    type: EEvent.DEPLOY_SUSPEND,
+                    deployment_id: deploymentID,
+                    commit_sha: "",
                     auto_trigger: true
                 })
             }

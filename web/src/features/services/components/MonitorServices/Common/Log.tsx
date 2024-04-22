@@ -12,10 +12,18 @@ export function Log() {
     const { id } = useParams();
     const [logData, setLogData] = useState<ILog[]>([])
     const isNewLog = useRef(false);
-    const [newLog, setNewLog] = useState<ILog>()
+    const [newLog, setNewLog] = useState<ILog[]>()
 
     useEffect(() => {
-        const handleEvent = (msg: ILog) => {
+        socket?.emit("join_logs", id);
+
+        return () => {
+            socket?.emit("out_logs", id);
+        }
+    }, [socket])
+
+    useEffect(() => {
+        const handleEvent = (msg: ILog[]) => {
             isNewLog.current = true;
             setNewLog(msg);
         };
@@ -30,7 +38,7 @@ export function Log() {
         if (!isNewLog.current || !newLog) return;
         const IS_SCROLL_TO_BOTTOM = isScrollToBottom();
 
-        setLogData([...logData, newLog]);
+        setLogData([...logData, ...newLog]);
         isNewLog.current = false;
 
         setTimeout(() => {
@@ -74,7 +82,7 @@ export function Log() {
     return <Box ref={boxRef} height={460} bgColor="#21232E" borderRadius={6} p={4} className="log-box">
         {logData.map(({ time, message, type }, key) => (
             <Text mb={3} key={key} color="white" fontSize="14px">
-                <Text display="inline-block" color="gray.400" width="172px">{getTimeString(new Date(time))}</Text>
+                <Text display="inline-block" color="gray.400" width="200px">{getTimeString(new Date(time))}</Text>
                 {type === ELogType.INFO && <Icon as={MdInfo} mr={2} />}
                 {type === ELogType.ERROR && <Icon color="red.500" as={MdError} mr={2} />}
                 {message}

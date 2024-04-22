@@ -26,4 +26,7 @@ export default class Kubectl {
         return externalIP;
     }
 
+    async suspend(deploymentName: string) {
+        await this.k8sDeployment.delete(deploymentName);
+    }
 }

@@ -12,5 +12,6 @@ func Migrate() {
 		&models.ResetPassword{},
 		&models.Deployment{},
 		&models.Events{},
+		&models.Logs{},
 	)
 }

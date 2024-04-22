@@ -20,6 +20,16 @@ type CreateDeploymentBody struct {
 	EnvVariables  string               `json:"env_variables"`
 }
 
+type UpdateDeploymentBody struct {
+	Name          string `json:"name"`
+	AutoDeploy    bool   `json:"auto_deploy"`
+	BuildCommand  string `json:"build_command"`
+	StartCommand  string `json:"start_command"`
+	Branch        string `json:"branch"`
+	EnvVariables  string `json:"env_variables"`
+	RootDirectory string `json:"root"`
+}
+
 type GetDeploymentParams struct {
 	ID string `param:"id"`
 }

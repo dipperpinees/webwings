@@ -63,7 +63,7 @@ export function EventList({ events }: { events: IEvent[] }) {
             {events.map((event) => (
                 <>
                     <Event event={event} />
-                    <Divider />
+                    <Divider/>
                 </>
             ))}
         </VStack>

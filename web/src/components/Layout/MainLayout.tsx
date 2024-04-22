@@ -20,7 +20,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { AiOutlineUser } from "react-icons/ai";
-import { MdAdd, MdLogout, MdSettings, MdWebAsset } from "react-icons/md";
+import { MdAdd, MdLogout, MdSettings } from "react-icons/md";
 import { PiComputerTowerBold } from "react-icons/pi";
 import { Link, useNavigate } from "react-router-dom";
 import { Logo } from "..";
@@ -31,7 +31,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-const Links = ["Dashboard", "Projects", "Team"];
+const Links = ["Dashboard"];
 
 const NavLink = (props: Props) => {
     const { children } = props;

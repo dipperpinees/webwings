@@ -4,7 +4,7 @@ import { useSocket } from "@/providers/ws";
 import { Box, Divider, Flex, HStack, VStack } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { EventList, Log, ServicesMonitorHeader } from "../Common";
+import { EventList, Log, ServicesMonitorHeader, SettingService } from "../Common";
 
 export function WebServicesMonitor() {
     const { id } = useParams();
@@ -65,6 +65,9 @@ export function WebServicesMonitor() {
                     </>}
                     {selectedTab === "Logs" && <>
                         <Log />
+                    </>}
+                    {selectedTab === "Settings" && <>
+                        <SettingService />
                     </>}
                 </Box>
             </HStack>

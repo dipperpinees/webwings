@@ -4,6 +4,7 @@ export enum EEventType {
     DEPLOY_SUCCESS = "DEPLOY_SUCCESS",
     NEW_DEPLOY = "NEW_DEPLOY",
     DEPLOY_CANCEL = "DEPLOY_CANCEL",
+    DEPLOY_SUSPEND = "DEPLOY_SUSPEND",
 }
 
 export interface IEvent {

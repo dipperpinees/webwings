@@ -18,7 +18,7 @@ export default function Landing() {
                                     position: "absolute",
                                     bottom: 1,
                                     left: 0,
-                                    bg: "blue.400",
+                                    bg: "teal.400",
                                     zIndex: -1,
                                 }}
                             >
@@ -37,10 +37,10 @@ export default function Landing() {
                         <Stack direction={{ base: "column", md: "row" }} spacing={4}>
                             <Button
                                 rounded={"full"}
-                                bg={"blue.400"}
+                                bg={"teal.400"}
                                 color={"white"}
                                 _hover={{
-                                    bg: "blue.500",
+                                    bg: "teal.500",
                                 }}
                             >
                                 Getting Started
