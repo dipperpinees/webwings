@@ -123,7 +123,6 @@ func UpdateDeployment(c echo.Context) error {
 	if err := c.Bind(&body); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-
 	lastDeployment := new(models.Deployment)
 	if err := db.GetDB().Where("id = ?", deploymentID).Preload("OAuth").Preload("Runtime").First(&lastDeployment).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -132,9 +131,7 @@ func UpdateDeployment(c echo.Context) error {
 	if body.Name != "" {
 		lastDeployment.Name = body.Name
 	}
-	if body.BuildCommand != "" {
-		lastDeployment.BuildCommand = body.BuildCommand
-	}
+	lastDeployment.BuildCommand = body.BuildCommand
 	if body.StartCommand != "" {
 		lastDeployment.StartCommand = body.StartCommand
 	}
@@ -143,7 +140,6 @@ func UpdateDeployment(c echo.Context) error {
 		lastDeployment.EnvVariables = body.EnvVariables
 	}
 	lastDeployment.RootDirectory = body.RootDirectory
-
 	newCommitMsg := ""
 	if lastDeployment.Branch != body.Branch {
 		branchData, err := github.GetBranchInfo(lastDeployment.OAuth.AccessToken, lastDeployment.OAuth.GitUsername, lastDeployment.RepoName, body.Branch)
@@ -164,7 +160,6 @@ func UpdateDeployment(c echo.Context) error {
 	if err := db.GetDB().Save(lastDeployment).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-
 	mq.SendToQueue("EVENT", &models.Events{
 		DeploymentID: lastDeployment.ID,
 		CommitSHA:    lastDeployment.Commit,
@@ -181,7 +176,30 @@ func UpdateDeployment(c echo.Context) error {
 
 func SuspendDeployment(c echo.Context) error {
 	deploymentID := c.Param("id")
-	mq.SendToQueue("SUSPEND_DEPLOYMENT", deploymentID)
+	msg := make(map[string]string)
+	msg["deploymentID"] = deploymentID
+	mq.SendToQueue("SUSPEND_DEPLOYMENT", msg)
 
 	return c.JSON(http.StatusOK, "Suspend deployment successfully")
+}
+
+func DeleteDeployment(c echo.Context) error {
+	deploymentID := c.Param("id")
+
+	if err := db.GetDB().Where("deployment_id = ?", deploymentID).Delete(&models.Events{}).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := db.GetDB().Where("deployment_id = ?", deploymentID).Delete(&models.Logs{}).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := db.GetDB().Where("id = ?", deploymentID).Delete(&models.Deployment{}).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	msg := make(map[string]string)
+	msg["deploymentID"] = deploymentID
+	mq.SendToQueue("DELETE_DEPLOYMENT", msg)
+	return c.JSON(http.StatusOK, "Delete deployment successfully")
 }

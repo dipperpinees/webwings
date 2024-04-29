@@ -1,9 +1,9 @@
-import { IEvent } from "@/features/services";
+import { EEventType, IEvent } from "@/features/services";
 import { useDeployment } from "@/features/services/api";
 import { useSocket } from "@/providers/ws";
-import { Box, Divider, Flex, HStack, VStack } from "@chakra-ui/react";
+import { Box, Divider, Flex, HStack, VStack, useToast } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { EventList, Log, ServicesMonitorHeader, SettingService } from "../Common";
 
 export function WebServicesMonitor() {
@@ -13,8 +13,9 @@ export function WebServicesMonitor() {
     const [newEvent, setNewEvent] = useState<IEvent | undefined>();
     const isNewEventRef = useRef<boolean>(false);
     const socket = useSocket();
-    const [selectedTab, setSelectedTab] = useState("Events");
-
+    const toast = useToast();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const selectedTab = searchParams.get("tab") || "Events"
     if (!deployment) return <></>;
 
     useEffect(() => {
@@ -39,6 +40,14 @@ export function WebServicesMonitor() {
 
     useEffect(() => {
         if (newEvent && isNewEventRef.current) {
+            if (newEvent.type === EEventType.DEPLOY_SUCCESS) {
+                toast({
+                    title: 'Deploy deployment successfully',
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                })
+            }
             setEvents([newEvent, ...events]);
             isNewEventRef.current = false;
         }
@@ -53,7 +62,7 @@ export function WebServicesMonitor() {
                     {["Events", "Logs", "Settings"].map((text) => (
                         <Flex width="100%" gap={1}>
                             <Box height="36px" width="2.5px" bgColor={text === selectedTab ? "blue.400" : "white"}></Box>
-                            <Box flex={1} onClick={() => setSelectedTab(text)} key={text} px={5} py={2} fontSize="14px" bgColor={selectedTab === text ? "blue.50" : "white"} borderRadius={6} _hover={{ cursor: "pointer", bgColor: "blue.100" }}>
+                            <Box flex={1} onClick={() => setSearchParams({tab: text})} key={text} px={5} py={2} fontSize="14px" bgColor={selectedTab === text ? "blue.50" : "white"} borderRadius={6} _hover={{ cursor: "pointer", bgColor: "blue.100" }}>
                                 {text}
                             </Box>
                         </Flex>

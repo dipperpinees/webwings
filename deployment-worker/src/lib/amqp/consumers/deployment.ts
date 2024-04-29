@@ -24,7 +24,20 @@ export class DeploymentConsumer {
         return async (msg: ConsumeMessage | null) => {
             if (!msg) return;
             try {
-                await this.webDeployment.suspend(msg.content.toString());
+                const {deploymentID} = JSON.parse(msg.content.toString()) as {deploymentID: string};
+                await this.webDeployment.suspend(deploymentID);
+            } catch (error: any) {
+                console.error(error);
+            }
+        };
+    }
+
+    private deleteDeployment(channel: Channel) {
+        return async (msg: ConsumeMessage | null) => {
+            if (!msg) return;
+            try {
+                const {deploymentID} = JSON.parse(msg.content.toString()) as {deploymentID: string};
+                await this.webDeployment.delete(deploymentID);
             } catch (error: any) {
                 console.error(error);
             }
@@ -53,9 +66,21 @@ export class DeploymentConsumer {
         });
     }
 
+    async initDeleteDeploymentQueue(channel: Channel) {
+        const QUEUE_NAME = 'DELETE_DEPLOYMENT';
+        await channel.assertQueue(QUEUE_NAME, {
+            durable: true,
+        });
+
+        channel.consume(QUEUE_NAME, this.deleteDeployment(channel), {
+            noAck: true,
+        });
+    }
+
     async init() {
         const channel = await this.amqp.createChannel();
         await this.initCreateDeploymentQueue(channel);
         await this.initSuspendDeploymentQueue(channel);
+        await this.initDeleteDeploymentQueue(channel);
     }
 }

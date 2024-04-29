@@ -30,14 +30,13 @@ export default async function initBuildLogsConsumer(io: Server<DefaultEventsMap,
                         }
                     })
                 } catch (err) {
-                    console.error(err);
+                    console.error(`${err}`);
                 }
             }
-            
         }, {
             noAck: true,
         })
     } catch (err) {
-        console.error('Error::', err)
+        console.error(`${err}`);
     }
 }

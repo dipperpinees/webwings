@@ -42,7 +42,7 @@ export default async function initEventConsumer(io: Server<DefaultEventsMap, Def
                     })
                     io.to("event_" + newEvent.deployment_id).emit("event", newEvent);
                 } catch (err) {
-                    console.error(err);
+                    console.error(`${err}`);
                 }
             }
 
@@ -50,6 +50,6 @@ export default async function initEventConsumer(io: Server<DefaultEventsMap, Def
             noAck: true,
         })
     } catch (err) {
-        console.error('Error::', err)
+        console.error(`${err}`);
     }
 }

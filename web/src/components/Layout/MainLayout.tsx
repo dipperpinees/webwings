@@ -31,7 +31,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-const Links = ["Dashboard"];
+const Links = [{name: "Dashboard", link: "/app/dashboard"}];
 
 const NavLink = (props: Props) => {
     const { children } = props;
@@ -105,7 +105,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                         </Box>
                         <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
                             {Links.map((link) => (
-                                <NavLink key={link}>{link}</NavLink>
+                                <NavLink key={link.link}><Link to={link.link}>{link.name}</Link></NavLink>
                             ))}
                         </HStack>
                     </HStack>
@@ -168,7 +168,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                     <Box pb={4} display={{ md: "none" }}>
                         <Stack as={"nav"} spacing={4}>
                             {Links.map((link) => (
-                                <NavLink key={link}>{link}</NavLink>
+                                 <NavLink key={link.link}><Link to={link.link}>{link.name}</Link></NavLink>
                             ))}
                         </Stack>
                     </Box>

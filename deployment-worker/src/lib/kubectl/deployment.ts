@@ -138,7 +138,11 @@ export default class K8sDeployment {
         return logArr[7];
     }
 
-    async delete(deploymentName: string) {
+    async suspend(deploymentName: string) {
         await this.cmd.exec(`/bin/bash -c "kubectl scale deployment ${deploymentName} --replicas=0"`);
+    }
+
+    async delete(deploymentName: string) {
+        await this.cmd.exec(`/bin/bash -c "kubectl delete deployment ${deploymentName}"`)
     }
 }

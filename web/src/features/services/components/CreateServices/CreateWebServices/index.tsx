@@ -38,7 +38,7 @@ export function CreateWebService() {
         const foundStartCommand = runtimesData?.find(({name}) => name === selectedRuntime)?.start_command;
         foundBuildCommand && setValue("build_command", foundBuildCommand);
         foundStartCommand && setValue("start_command", foundStartCommand);
-    }, [selectedRuntime])
+    }, [selectedRuntime, runtimesData])
 
     useEffect(() => {
         () => {

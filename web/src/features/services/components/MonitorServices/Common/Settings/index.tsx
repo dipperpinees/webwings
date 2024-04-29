@@ -1,16 +1,59 @@
 import { PUBLIC_DOMAIN } from "@/configs";
-import { useBranchesList, useDeployment } from "@/features/services/api";
+import { useBranchesList, useDeleteDeployment, useDeployment } from "@/features/services/api";
 import { useUpdateDeployment } from "@/features/services/api/useUpdateDeployment";
 import { IUpdateDeployment } from "@/features/services/types";
 import { useEnvStore } from "@/stores/env";
-import { Box, Button, Divider, Flex, HStack, Link, Text, VStack, useColorModeValue, useToast } from "@chakra-ui/react";
+import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Box, Button, Divider, Flex, HStack, Link, Text, VStack, useColorModeValue, useDisclosure, useToast } from "@chakra-ui/react";
 import isEqual from "lodash.isequal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { BuildCommand, SelectBranch, SelectDirectory, ServiceName, StartCommand } from "../../../CreateServices/Form";
 import { AutoDeploy } from "../../../CreateServices/Form/Advanced/AutoDeploy";
 import { EnvironmentVariable } from "../../../CreateServices/Form/Advanced/Environment";
+
+function DeleteButton({onDelete}: {onDelete: () => void}) {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const cancelRef = useRef(null)
+
+    return (
+        <>
+            <Button colorScheme='red' onClick={onOpen}>
+                Delete Deployment
+            </Button>
+
+            <AlertDialog
+                isOpen={isOpen}
+                leastDestructiveRef={cancelRef}
+                onClose={onClose}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                            Delete Web Service
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                            Are you sure? You can't undo this action afterwards.
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                            <Button ref={cancelRef} onClick={onClose}>
+                                Cancel
+                            </Button>
+                            <Button colorScheme='red' onClick={() => {
+                                onClose();
+                                onDelete();
+                            }} ml={3}>
+                                Delete
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
+        </>
+    )
+}
 
 export function SettingService() {
     const { id } = useParams();
@@ -32,6 +75,9 @@ export function SettingService() {
     const [isDirty, setIsDirty] = useState(false);
     const { mutateAsync: updateDeployment } = useUpdateDeployment();
     const toast = useToast();
+    const { mutateAsync: deleteDeployment } = useDeleteDeployment();
+    const navigate = useNavigate();
+    const [_, setSearchParams] = useSearchParams();
 
     useEffect(() => {
         if (!deployment) return;
@@ -58,6 +104,7 @@ export function SettingService() {
                 duration: 3000,
                 isClosable: true,
             });
+            setSearchParams({tab: "Events"})
         } catch (error) {
             let message = "Update web service failed";
             if (error instanceof Error) message = error.message;
@@ -81,6 +128,17 @@ export function SettingService() {
             },
             deployment
         ))
+    }
+
+    const handleDelete = async () => {
+        await deleteDeployment(id as string);
+        toast({
+            title: "Delete web service successfully",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+        });
+        navigate("/app/dashboard")
     }
 
     return <form onSubmit={handleSubmit(onSubmit)} onChange={handleFormChange}>
@@ -173,8 +231,8 @@ export function SettingService() {
         </Flex>
         <HStack mt={8} gap={6}>
             <Button colorScheme="teal" isDisabled={!isDirty} type="submit">Update Web Service</Button>
-            <Button colorScheme="red">Delete Web Service</Button>
-            <Button variant="ghost" color="red">Suspend Web Service</Button>
+            <DeleteButton onDelete={handleDelete}/>
+            {/* <Button variant="ghost" color="red">Suspend Web Service</Button> */}
         </HStack>
     </form>
 }

@@ -1,6 +1,6 @@
 export enum ELogType {
-    INFO = "info",
-    ERROR = "error",
+    INFO = "INFO",
+    ERROR = "ERROR",
 }
 
 export interface ILog {

@@ -51,6 +51,8 @@ export class Docker {
                     .replace('<start_command>', this.convertCommandToArray(startCommand))
                     .replace('<workdir>', workdir ? `/${workdir}` : "")
                 break;
+            case "Go":
+                
         }
         const dockerFilePath = path.join(_path, 'Dockerfile');
         writeFileSync(dockerFilePath, dockerFile);

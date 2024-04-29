@@ -99,4 +99,24 @@ export class WebDeployment {
             }
         }); 
     }
+
+    async delete(deploymentID: string) {
+        const previousPid = await this.redis.get(deploymentID + "_pid");
+        if (previousPid) {
+            try {
+                kill(parseInt(previousPid));
+                this.redis.del(deploymentID + "_pid");
+            } catch (err) {}
+        }
+        const childProcess = spawn("npx", ["ts-node", path.join(__dirname, "./__child_process/delete.worker.ts"), deploymentID], {
+            env: process.env
+        })
+        childProcess.stdout.on('data', (data) => {
+            console.log(`${data}`.trim());
+            
+        });
+        childProcess.stderr.on('data', (data) => {
+            console.log(`${data}`.trim());
+        });
+    }
 }

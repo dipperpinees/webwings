@@ -11,11 +11,11 @@ import (
 type Deployment struct {
 	gorm.Model
 	ID            uuid.UUID            `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
-	UserID        uuid.UUID            `json:"user_id" gorm:"uniqueIndex:idx_name_user"`
+	UserID        uuid.UUID            `json:"user_id"`
 	User          User                 `json:"-"`
 	OAuthID       uuid.UUID            `json:"oauth_id"`
 	OAuth         Oauth                `json:"oauth"`
-	Name          string               `json:"name" gorm:"uniqueIndex:idx_name_user"`
+	Name          string               `json:"name"`
 	RepoName      string               `json:"repo"`
 	RepoURL       string               `json:"repo_url"`
 	AutoDeploy    bool                 `json:"auto_deploy"`

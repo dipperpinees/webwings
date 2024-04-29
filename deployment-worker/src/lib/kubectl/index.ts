@@ -27,6 +27,11 @@ export default class Kubectl {
     }
 
     async suspend(deploymentName: string) {
-        await this.k8sDeployment.delete(deploymentName);
+        await this.k8sDeployment.suspend(deploymentName);
+    }
+
+    async delete(deploymentName: string) {
+        await this.k8sService.deleteService("service-" + deploymentName);
+        await this.k8sDeployment.deleteDeployment(deploymentName);
     }
 }
