@@ -1,8 +1,11 @@
 FROM <image>
 WORKDIR /app
 COPY . .
+
+WORKDIR /app/src<workdir>
 RUN go mod download
 
-RUN <build_command>
+<build_command>
 
-RUN <start_command>
+ENV PORT=:8000
+CMD <start_command>

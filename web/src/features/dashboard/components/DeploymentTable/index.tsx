@@ -54,11 +54,7 @@ export function DeploymentTable({ data, onClickItem }: IDeploymentTable) {
                                         <Icon boxSize={6} as={IoIosMore} />
                                     </MenuButton>
                                     <MenuList>
-                                        <MenuItem>Download</MenuItem>
-                                        <MenuItem>Create a Copy</MenuItem>
-                                        <MenuItem>Mark as Draft</MenuItem>
-                                        <MenuItem>Delete</MenuItem>
-                                        <MenuItem>Attend a Workshop</MenuItem>
+                                        <MenuItem>Settings</MenuItem>
                                     </MenuList>
                                 </Menu>
                             </Td>

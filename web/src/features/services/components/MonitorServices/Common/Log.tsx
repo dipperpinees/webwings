@@ -5,6 +5,7 @@ import { Box, Icon, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MdError, MdInfo } from "react-icons/md";
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 export function Log() {
     const boxRef = useRef<HTMLDivElement>(null);
@@ -36,19 +37,19 @@ export function Log() {
 
     useEffect(() => {
         if (!isNewLog.current || !newLog) return;
-        const IS_SCROLL_TO_BOTTOM = isScrollToBottom();
+        // const IS_SCROLL_TO_BOTTOM = isScrollToBottom();
 
         setLogData([...logData, ...newLog]);
         isNewLog.current = false;
 
-        setTimeout(() => {
-            IS_SCROLL_TO_BOTTOM && scrollToBottom();
-        }, 100)
+        // setTimeout(() => {
+        //     IS_SCROLL_TO_BOTTOM && scrollToBottom();
+        // }, 20)
     }, [newLog])
 
-    useEffect(() => {
-        scrollToBottom()
-    }, [])
+    // useEffect(() => {
+    //     scrollToBottom()
+    // }, [])
 
     // useEffect(() => {
     //     setTimeout(() => {
@@ -66,20 +67,20 @@ export function Log() {
     //     }, 2000)
     // }, [logData])
 
-    const isScrollToBottom = () => {
-        if (!boxRef.current) return false;
-        return Math.ceil(boxRef.current.scrollHeight - boxRef.current.scrollTop) === boxRef.current.clientHeight
-    }
+    // const isScrollToBottom = () => {
+    //     if (!boxRef.current) return false;
+    //     return Math.ceil(boxRef.current.scrollHeight - boxRef.current.scrollTop) === boxRef.current.clientHeight
+    // }
 
-    const scrollToBottom = () => {
-        if (!boxRef.current) return false;
-        boxRef.current.scrollTo({
-            top: boxRef.current.scrollHeight,
-            behavior: 'smooth'
-        });
-    }
+    // const scrollToBottom = () => {
+    //     if (!boxRef.current) return false;
+    //     boxRef.current.scrollTo({
+    //         top: boxRef.current.scrollHeight,
+    //         behavior: 'smooth'
+    //     });
+    // }
 
-    return <Box ref={boxRef} height={460} bgColor="#21232E" borderRadius={6} p={4} className="log-box">
+    return <ScrollToBottom className="log-box">
         {logData.map(({ time, message, type }, key) => (
             <Text mb={3} key={key} color="white" fontSize="14px">
                 <Text display="inline-block" color="gray.400" width="200px">{getTimeString(new Date(time))}</Text>
@@ -88,5 +89,5 @@ export function Log() {
                 {message}
             </Text>
         ))}
-    </Box>
+    </ScrollToBottom>
 }

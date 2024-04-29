@@ -58,9 +58,8 @@ func CreateNewDeployment(c echo.Context) error {
 	}
 
 	newDeployment.OAuth = *currentOAuth
-
 	currentRuntime := new(models.RuntimeVersion)
-	if err := db.GetDB().Find(&currentRuntime).Where("id = ?", newDeployment.RuntimeID).Error; err != nil {
+	if err := db.GetDB().Where("id = ?", newDeployment.RuntimeID).Find(&currentRuntime).Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	newDeployment.Runtime = *currentRuntime
@@ -90,13 +89,14 @@ func GetDeploymentList(c echo.Context) error {
 
 	deploymentList := new([]models.Deployment)
 	if err := db.GetDB().
+		Where("user_id = ?", user.ID).
 		Order("updated_at desc").
 		Preload("Runtime").
 		Preload("Events", func(db *gorm.DB) *gorm.DB {
-			return db.Order("created_at DESC").Limit(1)
+			return db.Order("events.created_at DESC")
 		}).
 		Find(deploymentList).
-		Where("user_id = ?", user.ID).Error; err != nil {
+		Error; err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 

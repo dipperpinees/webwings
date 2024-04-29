@@ -14,6 +14,7 @@ export class WebDeployment {
         @Inject() private readonly producer: Producer
     ) {}
     async start(deployment: IDeployment, cb: (log: string) => void) {
+        console.log(deployment)
         const previousPid = await this.redis.get(deployment.id + "_pid");
         if (previousPid) {
             try {

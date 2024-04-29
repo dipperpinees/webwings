@@ -41,11 +41,7 @@ export default class K8sDeployment {
                                             name: key,
                                             value
                                         }
-                                    }),
-                                    {
-                                        name: "PORT",
-                                        value: "8000"
-                                    },
+                                    })
                                 ]
                             }
                         ],
