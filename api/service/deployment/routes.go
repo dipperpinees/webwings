@@ -20,6 +20,7 @@ func (s *Service) RegisterRoutes(userSvc *user.Service) {
 	s.Router.PUT("/:id", handlers.UpdateDeployment, userSvc.AuthMiddleware, s.DeploymentPolicyMiddleware)
 	s.Router.POST("/suspend/:id", handlers.SuspendDeployment, userSvc.AuthMiddleware, s.DeploymentPolicyMiddleware)
 	s.Router.DELETE("/:id", handlers.DeleteDeployment, userSvc.AuthMiddleware, s.DeploymentPolicyMiddleware)
+	s.Router.POST("/force/:id", handlers.ForceDeploy, userSvc.AuthMiddleware, s.DeploymentPolicyMiddleware)
 
 	// webhooks
 	s.Router.POST("/webhooks", handlers.GithubWebhooks)

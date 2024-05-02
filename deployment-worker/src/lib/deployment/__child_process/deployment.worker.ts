@@ -63,10 +63,10 @@ class WebDeployment {
         cb("Push image to Docker registry successfully");
 
         const externalIP = await this.kubectl.start(deployment.id, this.getEnvConfig(deployment.env),`${this.config.dockerRegistryUser}/${deployment.id}:${SHORT_COMMIT_HASH}`, cb);
-        cb("Create deployment successfully");
 
         await this.cloudflare.createDNSRecord(deployment.domain, externalIP);
         cb("Create DNS record successfully");
+        cb(`Create deployment successfully with ${externalIP}`);
     }
 
     async startDeploy(deployment: IDeployment, cb: (log: string) => void) {

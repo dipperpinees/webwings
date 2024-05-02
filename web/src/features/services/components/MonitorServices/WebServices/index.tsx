@@ -1,5 +1,5 @@
 import { EEventType, IEvent } from "@/features/services";
-import { useDeployment } from "@/features/services/api";
+import { useDeployment, useForceDeploy } from "@/features/services/api";
 import { useSocket } from "@/providers/ws";
 import { Box, Divider, Flex, HStack, VStack, useToast } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +16,7 @@ export function WebServicesMonitor() {
     const toast = useToast();
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedTab = searchParams.get("tab") || "Events"
+    const {mutateAsync: forceDeploy} = useForceDeploy();
     if (!deployment) return <></>;
 
     useEffect(() => {
@@ -55,7 +56,7 @@ export function WebServicesMonitor() {
 
     return (
         <>
-            <ServicesMonitorHeader deployment={deployment} />
+            <ServicesMonitorHeader deployment={deployment} onForceDeploy={() => forceDeploy(id as string)} />
             <Divider />
             <HStack px={8} my={10} align="start" gap={8}>
                 <VStack align="start" flex={1}>

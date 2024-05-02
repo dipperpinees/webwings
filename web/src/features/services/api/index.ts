@@ -3,4 +3,5 @@ export * from "./useCurrentRuntime";
 export * from "./useRuntimesList";
 export * from "./useCreateDeployment";
 export * from "./useDeployment";
-export * from "./useDeleteDeployment"
+export * from "./useDeleteDeployment";
+export * from "./useForceDeploy";

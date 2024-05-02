@@ -14,9 +14,10 @@ import DeploymentStatus from "../DeploymentStatus";
 interface IDeploymentTable {
     data: IDeployment[];
     onClickItem: (item: IDeployment) => void;
+    onClickSettingsItem: (item: IDeployment) => void;
 }
 
-export function DeploymentTable({ data, onClickItem }: IDeploymentTable) {
+export function DeploymentTable({ data, onClickItem, onClickSettingsItem }: IDeploymentTable) {
     return (
         <TableContainer>
             <Table variant="simple">
@@ -47,14 +48,14 @@ export function DeploymentTable({ data, onClickItem }: IDeploymentTable) {
                             </Td>
                             <Td>{capitalizeFirstLetter(item.type)}</Td>
                             <Td>{item.runtime.runtime_name}</Td>
-                            <Td>{getTimeAgo(new Date(item.updated_at))}</Td>
+                            <Td>{getTimeAgo(new Date(item.event[0]?.updated_at || item.updated_at))}</Td>
                             <Td paddingInlineStart="var(--chakra-space-2)" onClick={(e) => e.stopPropagation()}>
                                 <Menu>
                                     <MenuButton as={Button} bgColor="transparent">
                                         <Icon boxSize={6} as={IoIosMore} />
                                     </MenuButton>
                                     <MenuList>
-                                        <MenuItem>Settings</MenuItem>
+                                        <MenuItem onClick={() => onClickSettingsItem(item)}>Settings</MenuItem>
                                     </MenuList>
                                 </Menu>
                             </Td>

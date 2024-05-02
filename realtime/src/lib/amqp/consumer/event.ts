@@ -1,8 +1,8 @@
 import prisma from "@/prisma";
-import amqp from "../connection";
-import { Prisma } from "@prisma/client";
+import { EEvent, IEvent } from "@/types/event";
 import { Server } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import amqp from "../connection";
 
 export default async function initEventConsumer(io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
     try {
@@ -18,11 +18,11 @@ export default async function initEventConsumer(io: Server<DefaultEventsMap, Def
         await channel.consume(QUEUE_NAME, async (msg) => {
             if (msg) {
                 try {
-                    const data = JSON.parse(msg.content.toString()) as Prisma.eventsCreateInput;
+                    const data = JSON.parse(msg.content.toString()) as IEvent;
                     if (!data.commit_msg || !data.commit_sha) {
                         const lastestEvent = await prisma.events.findMany({
                             where: {
-                                deployment_id: data.id
+                                deployment_id: data.deployment_id
                             },
                             orderBy: {
                                 created_at: 'desc',
@@ -34,12 +34,25 @@ export default async function initEventConsumer(io: Server<DefaultEventsMap, Def
                     }
                     const newEvent = await prisma.events.create({
                         data: {
-                            ...data,
-                            id: undefined,
+                            deployment_id: data.deployment_id,
+                            commit_msg: data.commit_msg,
+                            commit_sha: data.commit_sha,
+                            type: data.type,
+                            auto_trigger: data.auto_trigger,
                             created_at: new Date().toISOString(),
                             updated_at: new Date().toISOString()
                         }
                     })
+                    if (data.type === EEvent.DEPLOY_SUCCESS && data.external_ip) {
+                        await prisma.deployments.update({
+                            where: {
+                                id: data.deployment_id
+                            },
+                            data: {
+                                expose_ip: data.external_ip
+                            }
+                        })
+                    }
                     io.to("event_" + newEvent.deployment_id).emit("event", newEvent);
                 } catch (err) {
                     console.error(`${err}`);

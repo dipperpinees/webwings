@@ -14,7 +14,7 @@ export class WebDeployment {
         @Inject() private readonly producer: Producer
     ) {}
     async start(deployment: IDeployment, cb: (log: string) => void) {
-        console.log(deployment)
+        let lastMessage = "";
         const previousPid = await this.redis.get(deployment.id + "_pid");
         if (previousPid) {
             try {
@@ -34,6 +34,7 @@ export class WebDeployment {
             EX: 10 * 60
         });
         childProcess.stdout.on('data', (data) => {
+            lastMessage = `${data}`.trim();
             cb(`${data}`.trim());
             this.producer.sendBuildLog({
                 time: new Date(),
@@ -54,11 +55,14 @@ export class WebDeployment {
         childProcess.on('close', async (code) => {
             this.redis.del(deployment.id + "_pid");
             if (code === 0) {
+                console.log("🚀 ~ WebDeployment ~ childProcess.on ~ lastMessage:", lastMessage)
+                const externalIP = lastMessage.split(" ").slice(-1)[0];
                 await this.producer.sendEvent({
                     type: EEvent.DEPLOY_SUCCESS,
                     deployment_id: deployment.id,
                     commit_sha: deployment.commit,
-                    auto_trigger: true
+                    auto_trigger: true,
+                    external_ip: externalIP
                 })
             }
             if (code === 1) {

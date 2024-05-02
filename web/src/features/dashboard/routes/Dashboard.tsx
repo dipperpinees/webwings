@@ -14,6 +14,10 @@ export default function Dashboard() {
         navigate(`/app/services/monitor/${item.id}`);
     };
 
+    const handleOpenSettingsService = (item: IDeployment) => {
+        navigate(`/app/services/monitor/${item.id}?tab=Settings`);
+    };
+
     if (isLoading) {
         return <Progress size="xs" isIndeterminate colorScheme="teal" />
     }
@@ -31,7 +35,7 @@ export default function Dashboard() {
                         </InputLeftElement>
                         <Input placeholder="Search services" fontSize="0.875rem" />
                     </InputGroup>
-                    <DeploymentTable data={data} onClickItem={handleOpenService} />
+                    <DeploymentTable data={data} onClickItem={handleOpenService} onClickSettingsItem={handleOpenSettingsService} />
                 </> : <Box>
                     <Text as='b' fontSize="x-large">Get started in minutes</Text>
                     <VStack

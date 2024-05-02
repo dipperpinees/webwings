@@ -28,13 +28,13 @@ model deployments {
   env_variables    String?           @default("[]")
   runtime_id       BigInt?
   commit           String?           @default("latest")
+  expose_ip        String?
   oauths           oauths?           @relation(fields: [o_auth_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_deployments_o_auth")
   runtime_versions runtime_versions? @relation(fields: [runtime_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_deployments_runtime")
   users            users?            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_deployments_user")
   events           events[]
   logs             logs[]
 
-  @@unique([user_id, name], map: "idx_name_user")
   @@index([deleted_at], map: "idx_deployments_deleted_at")
 }
 

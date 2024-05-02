@@ -32,4 +32,5 @@ type Deployment struct {
 	RuntimeID     uint                 `json:"-"`
 	Runtime       RuntimeVersion       `json:"runtime"`
 	Commit        string               `json:"commit"`
+	ExposeIP      string               `json:"expose_ip"`
 }

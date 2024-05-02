@@ -34,6 +34,7 @@ export interface IDeployment {
     event: IEvent[];
     start_command: string;
     env: string;
+    expose_ip?: string;
 }
 
 export interface ICreateDeployment {

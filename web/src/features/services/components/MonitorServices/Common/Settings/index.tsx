@@ -211,6 +211,9 @@ export function SettingService() {
                     Your service is always available at <Link color="blue.500" href={`https://${deployment?.domain}.${PUBLIC_DOMAIN}`} target="_blank">https://{deployment?.domain}.{PUBLIC_DOMAIN}</Link>.
                     You can also point custom domains you own to this service.
                 </Text>
+                {!!deployment?.expose_ip && <Text color={useColorModeValue("beauty", "white")} fontSize="sm">
+                    Add A DNS record to IP <Link color="blue.500" href={`http://${deployment?.expose_ip}`} target="_blank">{deployment?.expose_ip}</Link>.
+                </Text>}
             </Box>
         </Flex>
         <Flex

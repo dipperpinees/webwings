@@ -203,3 +203,25 @@ func DeleteDeployment(c echo.Context) error {
 	mq.SendToQueue("DELETE_DEPLOYMENT", msg)
 	return c.JSON(http.StatusOK, "Delete deployment successfully")
 }
+
+func ForceDeploy(c echo.Context) error {
+	deploymentID := c.Param("id")
+	deployment := new(models.Deployment)
+	if err := db.GetDB().Where("id = ?", deploymentID).Preload("OAuth").Preload("Runtime").Find(deployment).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	branchData, err := github.GetBranchInfo(deployment.OAuth.AccessToken, deployment.OAuth.GitUsername, deployment.RepoName, deployment.Branch)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	mq.SendToQueue("EVENT", &models.Events{
+		DeploymentID: deployment.ID,
+		CommitSHA:    branchData.Commit.SHA,
+		Type:         string(enums.NEW_DEPLOY),
+		CommitMsg:    branchData.Commit.Commit.Message,
+		AutoTrigger:  true,
+	})
+
+	mq.SendToQueue("DEPLOYMENT", deployment)
+	return c.JSON(http.StatusOK, "Force deploy successfully")
+}

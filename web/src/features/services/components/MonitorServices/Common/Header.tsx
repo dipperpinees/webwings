@@ -3,7 +3,6 @@ import { EDeploymentType, IDeployment } from "@/features/services";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Button,
-    Divider,
     Flex,
     HStack,
     Icon,
@@ -12,7 +11,7 @@ import {
     MenuItem,
     MenuList,
     Text,
-    VStack,
+    VStack
 } from "@chakra-ui/react";
 import { BsGithub } from "react-icons/bs";
 import { IoMdGitBranch } from "react-icons/io";
@@ -21,7 +20,7 @@ import { MdOutlineWebAsset } from "react-icons/md";
 import { TbWorld } from "react-icons/tb";
 import { Link } from "react-router-dom";
 
-export function ServicesMonitorHeader({ deployment }: { deployment: IDeployment }) {
+export function ServicesMonitorHeader({ deployment, onForceDeploy }: { deployment: IDeployment, onForceDeploy: () => void }) {
     return (
         <HStack justifyContent="space-between" padding={8}>
             <VStack align="start" gap={3}>
@@ -64,11 +63,7 @@ export function ServicesMonitorHeader({ deployment }: { deployment: IDeployment 
                         Manual Deploy
                     </MenuButton>
                     <MenuList fontSize="sm">
-                        <MenuItem>Deploy latest commit</MenuItem>
-                        <MenuItem>Deploy a specific commit</MenuItem>
-                        <MenuItem>Clear build cache & deploy</MenuItem>
-                        <Divider />
-                        <MenuItem>Restart service</MenuItem>
+                        <MenuItem onClick={onForceDeploy}>Deploy latest commit</MenuItem>
                     </MenuList>
                 </Menu>
             </HStack>

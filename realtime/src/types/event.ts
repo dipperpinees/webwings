@@ -9,8 +9,9 @@ export enum EEvent {
 
 export interface IEvent {
     deployment_id: string;
-    commit_sha: string;
+    commit_sha: string | null;
     type: EEvent;
     auto_trigger: boolean;
     external_ip?: string;
+    commit_msg: string | null;
 }
