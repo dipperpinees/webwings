@@ -14,7 +14,7 @@ export default async function initBuildLogsConsumer(io: Server<DefaultEventsMap,
         await channel.assertQueue(QUEUE_NAME, {
             durable: false
         });
-
+        channel.prefetch(1);
         await channel.consume(QUEUE_NAME, async (msg) => {
             if (msg) {
                 try {

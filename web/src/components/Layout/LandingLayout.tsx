@@ -8,7 +8,7 @@ type LandingLayoutProps = {
 };
 
 export function LandingLayout({ children }: LandingLayoutProps) {
-    const { data: user } = useAuth();
+    const { data: user, isLoading: isUserLoading } = useAuth();
 
     return (
         <>
@@ -20,7 +20,7 @@ export function LandingLayout({ children }: LandingLayoutProps) {
                         </Box>
                     </HStack>
                     <Flex alignItems={"center"}>
-                        {user ? (
+                        {!isUserLoading && <>{user ? (
                             <Link to="/app/dashboard">
                                 <Button colorScheme="teal" borderRadius={50}>
                                     Dashboard
@@ -35,7 +35,7 @@ export function LandingLayout({ children }: LandingLayoutProps) {
                                     <Button colorScheme="teal">Sign In</Button>
                                 </Link>
                             </Flex>
-                        )}
+                        )}</>}
                     </Flex>
                 </Flex>
             </Box>

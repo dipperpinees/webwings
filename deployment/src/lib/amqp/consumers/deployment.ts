@@ -13,6 +13,7 @@ export class DeploymentConsumer {
             if (!msg) return;
             try {
                 const data = JSON.parse(msg.content.toString()) as IDeployment;
+                console.log("🚀 ~ DeploymentConsumer ~ return ~ data:", data)
                 this.webDeployment.start(data, console.log);
             } catch (error: any) {
                 console.error(error);
