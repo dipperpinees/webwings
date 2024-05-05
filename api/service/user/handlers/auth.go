@@ -6,6 +6,7 @@ import (
 
 	"github.com/dipperpinees/ci/pkg/auth"
 	"github.com/dipperpinees/ci/pkg/db/models"
+	"github.com/dipperpinees/ci/pkg/google"
 	"github.com/dipperpinees/ci/pkg/utils"
 	"github.com/dipperpinees/ci/service/user/dtos"
 	"github.com/dipperpinees/ci/service/user/repositories"
@@ -134,4 +135,32 @@ func SignOut(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.String(http.StatusOK, "Sign out successfully")
+}
+
+func GoogleSignIn(c echo.Context) error {
+	body := new(dtos.UserGoogleInput)
+	if err := c.Bind(&body); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	ggUser, err := google.GetUser(body.AccessToken)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user := new(models.User)
+	user.Email = ggUser.Email
+	user.Name = ggUser.Name
+	user.Password = "gg_password"
+	if err := repositories.FindOneOrCreateUser(user); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	accessToken, err := generateAccessToken(user)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	_, err = generateRefreshToken(user, c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	return c.JSON(http.StatusOK, &dtos.AuthResponse{User: *user, AccessToken: accessToken})
 }

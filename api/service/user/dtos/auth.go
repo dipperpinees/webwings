@@ -17,3 +17,11 @@ type AuthResponse struct {
 	models.User
 	AccessToken string `json:"accessToken"`
 }
+
+type UserGoogleInput struct {
+	AccessToken string `json:"access_token" binding:"required"`
+	AuthUser    string `json:"authuser"`
+	ExpiresIn   string `json:"prompt"`
+	Scope       string `json:"scope"`
+	TokenType   string `json:"bearer"`
+}

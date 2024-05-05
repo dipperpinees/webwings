@@ -23,6 +23,7 @@ func (s *Service) RegisterRoutes() {
 
 	s.Router.POST("/grant/github", handlers.GrantGithubOAuthAccess, s.AuthMiddleware)
 	s.Router.POST("/sign-in/github", handlers.SignInGithubOAuth)
+	s.Router.POST("/sign-in/google", handlers.GoogleSignIn)
 	s.Router.GET("/oauth", handlers.GetOAuthData, s.AuthMiddleware)
 
 	s.Router.POST("/reset-password", handlers.SendResetPasswordRequest)

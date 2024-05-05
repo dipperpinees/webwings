@@ -1,3 +1,4 @@
+import { OAUTH_TYPE, getGitHubUrl } from "@/utils/get-github-url";
 import {
     Box,
     Button,
@@ -13,13 +14,14 @@ import {
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
+import { useGoogleLogin } from '@react-oauth/google';
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
 import { BsGithub } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
-import { OAUTH_TYPE, getGitHubUrl } from "@/utils/get-github-url";
+import { Link, useNavigate } from "react-router-dom";
 import { useSignIn } from "../..";
-import { useState } from "react";
+import { useSignInGoogle } from "../../api";
 
 type FormValues = {
     email: string;
@@ -36,6 +38,26 @@ export function SignInForm() {
     const navigate = useNavigate();
     const toast = useToast();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { mutateAsync: googleSignIn } = useSignInGoogle();
+    const loginWithGoogle = useGoogleLogin({
+        onSuccess: async tokenResponse => {
+            setIsLoading(true);
+            try {
+                await googleSignIn(tokenResponse);
+                navigate("/app/dashboard");
+            } catch (error) {
+                let message = "Sign in failed";
+                if (error instanceof Error) message = error.message;
+                toast({
+                    title: message,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
+            setIsLoading(false);
+        },
+    });
 
     const onSubmit: SubmitHandler<FormValues> = async ({ email, password }) => {
         setIsLoading(true);
@@ -128,7 +150,7 @@ export function SignInForm() {
                                             <Text>GitHub</Text>
                                         </Flex>
                                     </Button>
-                                    <Button flex={1}>
+                                    <Button flex={1} onClick={() => loginWithGoogle()}>
                                         <Flex align="center" gap={3}>
                                             <Icon as={FcGoogle} />
                                             <Text>Google</Text>

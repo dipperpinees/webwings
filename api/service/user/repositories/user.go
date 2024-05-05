@@ -10,6 +10,10 @@ func CreateUser(newUser *models.User) error {
 	return db.GetDB().Create(&newUser).Error
 }
 
+func FindOneOrCreateUser(user *models.User) error {
+	return db.GetDB().FirstOrCreate(&user, models.User{Email: user.Email}).Error
+}
+
 func GetUserByEmail(email string) (*models.User, error) {
 	currentUser := new(models.User)
 	err := db.GetDB().Where("email = ?", email).First(currentUser).Error
