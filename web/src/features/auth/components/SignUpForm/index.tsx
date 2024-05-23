@@ -117,10 +117,10 @@ export function SignUpForm() {
                                 <Button
                                     loadingText="Submitting"
                                     size="lg"
-                                    bg={"blue.400"}
+                                    bg={"teal.400"}
                                     color={"white"}
                                     _hover={{
-                                        bg: "blue.500",
+                                        bg: "teal.500",
                                     }}
                                     type="submit"
                                     isLoading={isLoading}
