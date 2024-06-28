@@ -1,39 +1,38 @@
 import { ELogType, ILog } from "@/features/services";
 import { useSocket } from "@/providers/ws";
 import { getTimeString } from "@/utils/time";
-import { Box, Icon, Text } from "@chakra-ui/react";
+import { Icon, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import { MdError, MdInfo } from "react-icons/md";
-import ScrollToBottom from 'react-scroll-to-bottom';
+import { useParams } from "react-router-dom";
+import ScrollToBottom from "react-scroll-to-bottom";
 
 export function Log() {
-    const boxRef = useRef<HTMLDivElement>(null);
     const socket = useSocket();
     const { id } = useParams();
-    const [logData, setLogData] = useState<ILog[]>([])
+    const [logData, setLogData] = useState<ILog[]>([]);
     const isNewLog = useRef(false);
-    const [newLog, setNewLog] = useState<ILog[]>()
+    const [newLog, setNewLog] = useState<ILog[]>();
 
     useEffect(() => {
         socket?.emit("join_logs", id);
 
         return () => {
             socket?.emit("out_logs", id);
-        }
-    }, [socket])
+        };
+    }, [socket]);
 
     useEffect(() => {
         const handleEvent = (msg: ILog[]) => {
             isNewLog.current = true;
             setNewLog(msg);
         };
-        socket?.on("logs", handleEvent)
+        socket?.on("logs", handleEvent);
 
         return () => {
-            socket?.off('logs', handleEvent);
-        }
-    }, [socket])
+            socket?.off("logs", handleEvent);
+        };
+    }, [socket]);
 
     useEffect(() => {
         if (!isNewLog.current || !newLog) return;
@@ -45,7 +44,7 @@ export function Log() {
         // setTimeout(() => {
         //     IS_SCROLL_TO_BOTTOM && scrollToBottom();
         // }, 20)
-    }, [newLog])
+    }, [newLog]);
 
     // useEffect(() => {
     //     scrollToBottom()
@@ -80,14 +79,18 @@ export function Log() {
     //     });
     // }
 
-    return <ScrollToBottom className="log-box">
-        {logData.map(({ time, message, type }, key) => (
-            <Text mb={3} key={key} color="white" fontSize="14px">
-                <Text display="inline-block" color="gray.400" width="200px">{getTimeString(new Date(time))}</Text>
-                {type === ELogType.INFO && <Icon as={MdInfo} mr={2} />}
-                {type === ELogType.ERROR && <Icon color="red.500" as={MdError} mr={2} />}
-                {message}
-            </Text>
-        ))}
-    </ScrollToBottom>
+    return (
+        <ScrollToBottom className="log-box">
+            {logData.map(({ time, message, type }, key) => (
+                <Text mb={3} key={key} color="white" fontSize="14px">
+                    <Text display="inline-block" color="gray.400" width="200px">
+                        {getTimeString(new Date(time))}
+                    </Text>
+                    {type === ELogType.INFO && <Icon as={MdInfo} mr={2} />}
+                    {type === ELogType.ERROR && <Icon color="red.500" as={MdError} mr={2} />}
+                    {message}
+                </Text>
+            ))}
+        </ScrollToBottom>
+    );
 }

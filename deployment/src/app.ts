@@ -1,15 +1,14 @@
 import dotenv from 'dotenv';
-import 'module-alias/register';
+import moduleAlias from 'module-alias';
+moduleAlias.addAlias('@', __dirname);
 import 'reflect-metadata';
 import Container from 'typedi';
 import { DeploymentConsumer } from './lib/amqp';
-import { EEvent } from './types';
-import { Producer } from './lib/amqp/producers';
 
 dotenv.config();
 
 const deploymentConsumer = Container.get(DeploymentConsumer);
 
-deploymentConsumer.init().catch(err => {
+deploymentConsumer.init().catch((err) => {
     throw err;
 });

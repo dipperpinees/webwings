@@ -1,8 +1,7 @@
 import { Center, Spinner } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import { EDeploymentType } from "..";
 import { useDeployment } from "../api";
-import { StaticServicesMonitor, WebServicesMonitor } from "../components";
+import { WebServicesMonitor } from "../components";
 
 export const ServiceMonitorRoutes = () => {
     const { id } = useParams();
@@ -16,9 +15,5 @@ export const ServiceMonitorRoutes = () => {
         );
     }
 
-    if (deployment.type === EDeploymentType.STATIC) {
-        return <StaticServicesMonitor />
-    }
-
-    return <WebServicesMonitor />
+    return <WebServicesMonitor />;
 };

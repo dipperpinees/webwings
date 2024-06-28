@@ -13,15 +13,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import isEqual from "lodash.isequal";
-import { useUpdateUser } from "../../api";
-import { useParams } from "react-router-dom";
 
 export function UserSettings() {
     const { data: user } = useAuth();
     const [userProfile, serUserProfile] = useState<IUser | undefined>();
     const [isDirty, setIsDirty] = useState<boolean>(false);
-    const params = useParams();
-    const { mutateAsync: updateUserHandler } = useUpdateUser();
 
     useEffect(() => {
         if (!user) return;
@@ -31,11 +27,6 @@ export function UserSettings() {
     useEffect(() => {
         setIsDirty(isEqual(user, userProfile));
     }, [user, userProfile]);
-
-    const handleSubmit = () => {
-        if (!params.id) return;
-        updateUserHandler({ id: params.id, data });
-    };
 
     if (!userProfile) return <Spinner />;
 
