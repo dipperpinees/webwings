@@ -1,0 +1,27 @@
+{
+    "name": "webwings",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "install:api": "cd apps/api && go mod tidy",
+        "postinstall": "npm run install:api",
+        "build:api": "cd apps/api && go build cmd/server/main.go",
+        "build:web": "npm run build --prefix apps/web",
+        "build:deployment": "npm run build --prefix apps/deployment",
+        "build:monitoring": "npm run build --prefix apps/monitoring",
+        "build": "export $(grep -v '^#' .env | xargs) && concurrently \"npm run build:api\" \"npm run build:web\" \"npm run build:deployment\" \"npm run build:monitoring\"",
+        "dev:api": "cd apps/api && npx nodemon --exec go run ./cmd/server/main.go --signal SIGTERM",
+        "dev:web": "npm run dev --prefix apps/web",
+        "dev:deployment": "npm run dev --prefix apps/deployment",
+        "dev:monitoring": "npm run dev --prefix apps/monitoring",
+        "dev": "export $(grep -v '^#' .env | xargs) && concurrently \"npm run dev:api\" \"npm run dev:web\" \"npm run dev:deployment\" \"npm run dev:monitoring\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "concurrently": "^8.2.2",
+        "nodemon": "^3.1.4",
+        "webwings": "link:"
+    }
+}

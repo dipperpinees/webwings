@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"os"
-
+	"fmt"
 	"github.com/dipperpinees/ci/configs"
 	"github.com/dipperpinees/ci/pkg/db"
 	"github.com/dipperpinees/ci/pkg/mq"
@@ -16,6 +16,7 @@ import (
 )
 
 func main() {
+	fmt.Println(os.Getenv("DB_PORT"))
 	configs.InitConfigs(&configs.Configs{
 		DB_PORT:                 os.Getenv("DB_PORT"),
 		DB_HOST:                 os.Getenv("DB_HOST"),
