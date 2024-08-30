@@ -3,6 +3,8 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
+        "db:migrate": "export $(grep -v '^#' .env | xargs) && cd apps/api && go run cmd/db/main.go migrate --signal SIGTERM",
+        "db:seed": "export $(grep -v '^#' .env | xargs) && cd apps/api && go run cmd/db/main.go seed --signal SIGTERM",
         "install:api": "cd apps/api && go mod tidy",
         "postinstall": "npm run install:api",
         "build:api": "cd apps/api && go build cmd/server/main.go",

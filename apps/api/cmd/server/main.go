@@ -23,7 +23,7 @@ func main() {
 		DB_NAME:                 os.Getenv("DB_NAME"),
 		DB_USERNAME:             os.Getenv("DB_USERNAME"),
 		DB_PASSWORD:             os.Getenv("DB_PASSWORD"),
-		PORT:                    os.Getenv("PORT"),
+		PORT:                    "50001",
 		JWT_SECRET_KEY:          os.Getenv("JWT_SECRET_KEY"),
 		GITHUB_OAUTH_CLIENT_ID:  os.Getenv("GITHUB_OAUTH_CLIENT_ID"),
 		GITHUB_OAUTH_SECRET_KEY: os.Getenv("GITHUB_OAUTH_SECRET_KEY"),
@@ -33,7 +33,8 @@ func main() {
 		PUBLIC_API_URL:          os.Getenv("PUBLIC_API_URL"),
 	})
 	db.InitDB()
-
+	db.Migrate()
+	
 	// message queue
 	conn, err := mq.InitRabbitMQ()
 	if err != nil {

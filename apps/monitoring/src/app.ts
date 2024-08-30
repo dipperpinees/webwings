@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 const io = wsHandler(server);
 
-const PORT = process.env.PORT || 3335;
+const PORT = 50002;
 server.listen(PORT, () => {
     console.log('listening on *:', PORT);
 });

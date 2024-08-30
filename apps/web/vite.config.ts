@@ -1,10 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import dotenv from "dotenv";
 
 const { API_URL, GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_REDIRECT_URL, MAIN_DOMAIN, WS_URI, GOOGLE_CLIENT_ID } =
-    dotenv.config({ path: "./.env" }).parsed;
+    process.env;
 
 export default defineConfig({
     plugins: [react()],
