@@ -1,3 +1,0 @@
-abc.hiepnk.id.vn:80 {
-    reverse_proxy 34.92.20.250:80
-}
