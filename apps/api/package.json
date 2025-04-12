@@ -1,14 +1,19 @@
 {
-  "name": "$name$",
-  "version": "$version$",
-  "description": "$END$",
-  "main": "$main$",
+  "name": "api",
+  "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:consumer\"",
+    "dev:server": "go run ./cmd/server/main.go --signal SIGTERM",
+    "dev:consumer": "go run ./cmd/consumer/main.go --signal SIGTERM",
+    "db:migrate": "go run cmd/db/main.go migrate",
+    "db:seed": "go run cmd/db/main.go seed",
+    "build:server": "go build -o server ./cmd/server/main.go",
+    "build:consumer": "go build -o consumer ./cmd/consumer/main.go",
+    "build": "npm run build:server && npm run build:consumer",
+    "start": "concurrently \"./server\" \"./consumer\""
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dipperpinees/khoa-luan-hiepnk.git"
-  },
-  "private": true
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
 }
