@@ -15,7 +15,7 @@ func main() {
 		DB_NAME:                 os.Getenv("DB_NAME"),
 		DB_USERNAME:             os.Getenv("DB_USERNAME"),
 		DB_PASSWORD:             os.Getenv("DB_PASSWORD"),
-		PORT:                    os.Getenv("PORT"),
+		PORT:                    os.Getenv("API_PORT"),
 		JWT_SECRET_KEY:          os.Getenv("JWT_SECRET_KEY"),
 		GITHUB_OAUTH_CLIENT_ID:  os.Getenv("GITHUB_OAUTH_CLIENT_ID"),
 		GITHUB_OAUTH_SECRET_KEY: os.Getenv("GITHUB_OAUTH_SECRET_KEY"),

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/apps/Dockerfile
+        ports:
+            - "${API_PORT}:50001"
+            - "${WEB_PORT}:3000"
+    postgres:
+        build:
+            context: .
+            dockerfile: docker/postgres/Dockerfile
+        container_name: webwings-postgres
+        restart: always
+        volumes:
+            - webwings_postgres_data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: $DB_NAME
+            POSTGRES_USER: $DB_USERNAME
+            POSTGRES_PASSWORD: $DB_PASSWORD
+        ports:
+            - '${DB_PORT}:5432'
+        networks:
+            - webwings-network
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: webwings-rabbitmq
+        ports:
+            - '${AMQP_PORT}:5672'
+            - '${AMQP_MANAGEMENT_PORT}:15672'
+        environment:
+            RABBITMQ_DEFAULT_USER: $AMQP_USER
+            RABBITMQ_DEFAULT_PASS: $AMQP_PASSWORD
+        networks:
+            - webwings-network
+        volumes:
+            - webwings_rabbitmq_data:/var/lib/rabbitmq
+    redis:
+        container_name: webwings-redis
+        image: redis:7-alpine
+        command: 'redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes'
+        restart: always
+        volumes:
+            - webwings_redis_data:/data
+        ports:
+            - ${REDIS_HOST_PORT}:6379
+        networks:
+            - webwings-network
+networks:
+    webwings-network:
+
+volumes:
+    webwings_postgres_data:
+    webwings_rabbitmq_data:
+    webwings_redis_data:

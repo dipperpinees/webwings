@@ -1,7 +1,7 @@
 import amqplib from "amqplib";
 
 let instance: Amqp;
-let conn: amqplib.Connection;
+let conn: amqplib.ChannelModel;
 
 class Amqp {
     constructor() {
@@ -11,7 +11,7 @@ class Amqp {
         instance = this;
     }
 
-    async getConn() {
+    async getConn() :Promise<amqplib.ChannelModel> {
         if (conn) return conn;
         const _conn = await amqplib.connect(process.env.AMQP_URI as string);
         conn = _conn;

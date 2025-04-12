@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-const { API_URL, GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_REDIRECT_URL, MAIN_DOMAIN, WS_URI, GOOGLE_CLIENT_ID } =
+const { WEB_PORT, API_URL, GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_REDIRECT_URL, MAIN_DOMAIN, WS_URI, GOOGLE_CLIENT_ID } =
     process.env;
 
 export default defineConfig({
@@ -28,5 +28,6 @@ export default defineConfig({
                 ws: true,
             },
         },
+        port: WEB_PORT ? parseInt(WEB_PORT) : undefined
     },
 });

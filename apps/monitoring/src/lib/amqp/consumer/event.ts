@@ -15,7 +15,7 @@ export default async function initEventConsumer(io: Server<DefaultEventsMap, Def
             durable: true
         });
 
-        await channel.consume(QUEUE_NAME, async (msg) => {
+        await channel.consume(QUEUE_NAME, async (msg: any) => {
             if (msg) {
                 try {
                     const data = JSON.parse(msg.content.toString()) as IEvent;

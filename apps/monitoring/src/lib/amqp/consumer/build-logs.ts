@@ -15,7 +15,7 @@ export default async function initBuildLogsConsumer(io: Server<DefaultEventsMap,
             durable: false
         });
         channel.prefetch(1);
-        await channel.consume(QUEUE_NAME, async (msg) => {
+        await channel.consume(QUEUE_NAME, async (msg: any) => {
             if (msg) {
                 try {
                     const data = JSON.parse(msg.content.toString()) as ILog;

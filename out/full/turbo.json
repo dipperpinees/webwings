@@ -1,0 +1,98 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    ".env"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "env": [
+        "WEB_PORT",
+        "GITHUB_OAUTH_CLIENT_ID",
+        "GITHUB_OAUTH_SECRET_KEY",
+        "GITHUB_OAUTH_REDIRECT_URL",
+        "API_URL"
+      ]
+    },
+    "db:migrate": {
+      "cache": false,
+      "env": [
+        "DB_PORT",
+        "DB_HOST",
+        "DB_NAME",
+        "DB_USERNAME",
+        "DB_PASSWORD"
+      ],
+      "persistent": false
+    },
+    "db:seed": {
+      "cache": false,
+      "env": [
+        "DB_PORT",
+        "DB_HOST",
+        "DB_NAME",
+        "DB_USERNAME",
+        "DB_PASSWORD"
+      ],
+      "persistent": false
+    },
+    "dev": {
+      "cache": false,
+      "env": [
+        "DB_PORT",
+        "DB_HOST",
+        "DB_NAME",
+        "DB_USERNAME",
+        "DB_PASSWORD",
+        "AMQP_URI",
+        "WEB_PORT",
+        "GITHUB_OAUTH_CLIENT_ID",
+        "GITHUB_OAUTH_SECRET_KEY",
+        "EMAIL",
+        "EMAIL_PASSWORD",
+        "PUBLIC_API_URL",
+        "GITHUB_OAUTH_REDIRECT_URL",
+        "API_URL",
+        "REDIS_URL",
+        "GOOGLE_CLIENT_ID",
+        "DOCKER_REGISTRY_USER",
+        "CLOUDFLARE_ZONE_ID",
+        "CLOUDFLARE_API_KEY",
+        "MAIN_DOMAIN"
+      ],
+      "persistent": false
+    },
+    "generate": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "cache": false,
+      "env": [
+        "DB_PORT",
+        "DB_HOST",
+        "DB_NAME",
+        "DB_USERNAME",
+        "DB_PASSWORD",
+        "AMQP_URI",
+        "WEB_PORT",
+        "GITHUB_OAUTH_CLIENT_ID",
+        "GITHUB_OAUTH_SECRET_KEY",
+        "EMAIL",
+        "EMAIL_PASSWORD",
+        "PUBLIC_API_URL",
+        "GITHUB_OAUTH_REDIRECT_URL",
+        "API_URL",
+        "REDIS_URL",
+        "GOOGLE_CLIENT_ID",
+        "DOCKER_REGISTRY_USER",
+        "CLOUDFLARE_ZONE_ID",
+        "CLOUDFLARE_API_KEY",
+        "MAIN_DOMAIN"
+      ],
+      "persistent": true
+    }
+  }
+}

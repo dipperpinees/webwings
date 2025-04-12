@@ -1,0 +1,38 @@
+FROM node:20-alpine AS base
+RUN apk update
+RUN apk add --no-cache libc6-compat go gcc musl-dev
+
+FROM base AS deps
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run generate
+RUN npm run build
+
+FROM base AS prod
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./
+COPY --from=deps /app/package-lock.json ./
+COPY --from=deps /app/turbo.json ./
+COPY --from=deps /app/.env ./
+
+COPY --from=deps /app/apps/api/package.json ./apps/api/
+COPY --from=deps /app/apps/api/server ./apps/api/
+COPY --from=deps /app/apps/api/consumer ./apps/api/
+
+COPY --from=deps /app/apps/deployment/package.json ./apps/deployment/
+COPY --from=deps /app/apps/deployment/dist ./apps/deployment/dist
+
+COPY --from=deps /app/apps/monitoring/package.json ./apps/monitoring/
+COPY --from=deps /app/apps/monitoring/dist ./apps/monitoring/dist
+
+COPY --from=deps /app/apps/web/package.json ./apps/web/package.json/
+COPY --from=deps /app/apps/web/dist ./apps/web/dist
+
+CMD ["npm", "run", "start"]
+
+
+
+
+

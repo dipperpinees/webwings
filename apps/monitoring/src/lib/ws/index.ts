@@ -33,14 +33,14 @@ export default function wsHandler(server: http.Server<typeof http.IncomingMessag
                 },
                 take: 10,
             });
-            k8sLogger.getLog(msg, 10).then((data) => {
+            k8sLogger.getLog(msg, 10).then((data: any) => {
                 const firstLogs = [
-                    ...buildLogs.map((item) => ({
+                    ...buildLogs.map((item: any) => ({
                         time: item.created_at,
                         message: item.message,
                         type: 'INFO',
                     })),
-                    ...data.map((item) => ({
+                    ...data.map((item: any) => ({
                         time: new Date(item.time),
                         message: item.log,
                         type: 'INFO',

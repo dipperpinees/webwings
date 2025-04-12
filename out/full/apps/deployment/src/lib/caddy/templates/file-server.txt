@@ -1,0 +1,4 @@
+{{DOMAIN}}
+
+root * {{PATH}}
+file_server
